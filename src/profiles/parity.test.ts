@@ -1,0 +1,85 @@
+import { describe, expect, it } from "vitest";
+import { render, toMatcher } from "../path/template.js";
+import { profileById } from "./registry.js";
+
+const segments = (id: string) => {
+  const profile = profileById(id);
+  if (profile === undefined) {
+    throw new Error(`missing profile ${id}`);
+  }
+  return profile.segments;
+};
+
+/**
+ * Exact path strings the original closures produce at account/index 0. `render` must reproduce them verbatim, proving
+ * the shape builders match the originals they replace.
+ */
+const RENDER_FIXTURES: ReadonlyArray<
+  readonly [id: string, values: Record<string, number>, expected: string]
+> = [
+  ["bitcoin-bip44-legacy-account", { account: 0 }, "m/44'/0'/0'"],
+  ["bitcoin-bip84-native-segwit-account", { account: 0 }, "m/84'/0'/0'"],
+  ["evm-bip44-address-index", { index: 0 }, "m/44'/60'/0'/0/0"],
+  ["evm-ledger-live-account-index", { account: 1 }, "m/44'/60'/1'/0/0"],
+  ["evm-legacy-ledger-mew", { index: 0 }, "m/44'/60'/0'/0"],
+  ["iota-ed25519-account", { account: 0 }, "m/44'/4218'/0'/0'/0'"],
+  ["iota-secp256k1-account", { account: 0 }, "m/54'/4218'/0'/0/0"],
+  ["iota-secp256r1-account", { account: 0 }, "m/74'/4218'/0'/0/0"],
+  ["cardano-shelley-base-account", { account: 0 }, "m/1852'/1815'/0'/0/0"],
+  ["cardano-byron-icarus-account", { account: 0 }, "m/44'/1815'/0'/0/0"],
+  ["cardano-byron-random-account", { account: 0 }, "m/0'/0'"],
+  ["cosmos-keplr-account", { account: 0 }, "m/44'/118'/0'/0/0"],
+  ["terra-ledger-account", { account: 0 }, "m/44'/330'/0'/0/0"],
+  ["polkadot-ledger-substrate-account", { account: 0 }, "m/44'/354'/0'/0'/0'"],
+  ["solana-ledger-phantom-account", { account: 0 }, "m/44'/501'/0'/0'"],
+  ["solana-legacy-ledger-root", {}, "m/44'/501'"],
+  ["starknet-ready-argent-account", { index: 0 }, "m/44'/9004'/0'/0/0"],
+  ["stellar-slip44-account", { account: 0 }, "m/44'/148'/0'"],
+  ["nano-ledger-account", { account: 0 }, "m/44'/165'/0'"],
+];
+
+/**
+ * Matcher sources that must equal the hand-written `ACCOUNT_DERIVATION_NAME_RULES` patterns in the
+ * wallets-sync-model verbatim (the account-style rules that capture with `(\d+)`).
+ */
+const MATCHER_FIXTURES: ReadonlyArray<readonly [id: string, source: string]> = [
+  ["evm-bip44-address-index", "^m\\/44'\\/60'\\/0'\\/0\\/(\\d+)$"],
+  ["evm-ledger-live-account-index", "^m\\/44'\\/60'\\/(\\d+)'\\/0\\/0$"],
+  ["evm-legacy-ledger-mew", "^m\\/44'\\/60'\\/0'\\/(\\d+)$"],
+  ["cosmos-keplr-account", "^m\\/44'\\/118'\\/(\\d+)'\\/0\\/0$"],
+  ["terra-ledger-account", "^m\\/44'\\/330'\\/(\\d+)'\\/0\\/0$"],
+  ["polkadot-ledger-substrate-account", "^m\\/44'\\/354'\\/(\\d+)'\\/0'\\/0'$"],
+  ["solana-ledger-phantom-account", "^m\\/44'\\/501'\\/(\\d+)'\\/0'$"],
+  ["solana-legacy-ledger-root", "^m\\/44'\\/501'$"],
+  ["stellar-slip44-account", "^m\\/44'\\/148'\\/(\\d+)'$"],
+  ["nano-ledger-account", "^m\\/44'\\/165'\\/(\\d+)'$"],
+  ["starknet-ready-argent-account", "^m\\/44'\\/9004'\\/0'\\/0\\/(\\d+)$"],
+];
+
+/**
+ * UTXO `*_DERIVATION_NAME_RULES` patterns recognize without capturing (`\d+'`). Dropping our capture parens must yield
+ * the exact hand-written source, tying the engine to those rules too.
+ */
+const UTXO_MATCHER_FIXTURES: ReadonlyArray<readonly [id: string, source: string]> = [
+  ["bitcoin-bip44-legacy-account", "^m\\/44'\\/0'\\/\\d+'$"],
+  ["bitcoin-bip84-native-segwit-account", "^m\\/84'\\/0'\\/\\d+'$"],
+  ["litecoin-bip49-nested-segwit-account", "^m\\/49'\\/2'\\/\\d+'$"],
+  ["zcash-bip44-transparent-account", "^m\\/44'\\/133'\\/\\d+'$"],
+  ["cardano-byron-random-account", "^m\\/\\d+'\\/0'$"],
+];
+
+describe("parity with original closures", () => {
+  it.each(RENDER_FIXTURES)("render %s -> %o = %s", (id, values, expected) => {
+    expect(render(segments(id), values)).toBe(expected);
+  });
+});
+
+describe("parity with original regex rules", () => {
+  it.each(MATCHER_FIXTURES)("matcher source %s", (id, source) => {
+    expect(toMatcher(segments(id)).regex.source).toBe(source);
+  });
+
+  it.each(UTXO_MATCHER_FIXTURES)("utxo matcher source (capture-stripped) %s", (id, source) => {
+    expect(toMatcher(segments(id)).regex.source.replaceAll("(\\d+)", "\\d+")).toBe(source);
+  });
+});
