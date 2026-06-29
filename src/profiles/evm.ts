@@ -3,7 +3,7 @@ import { lit, vr } from "../path/template.js";
 import { COIN_TYPES } from "../slip44.js";
 import type { DerivationProfile } from "./types.js";
 
-const ECOSYSTEMS = ["evm", "zksync-lite"] as const;
+const ECOSYSTEMS = ["dymension", "evm", "zksync-lite"] as const;
 
 const base = {
   addressKind: "evm",

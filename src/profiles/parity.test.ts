@@ -18,6 +18,7 @@ const RENDER_FIXTURES: ReadonlyArray<
   readonly [id: string, values: Record<string, number>, expected: string]
 > = [
   ["bitcoin-bip44-legacy-account", { account: 0 }, "m/44'/0'/0'"],
+  ["dash-bip44-legacy-account", { account: 0 }, "m/44'/5'/0'"],
   ["bitcoin-bip84-native-segwit-account", { account: 0 }, "m/84'/0'/0'"],
   ["evm-bip44-address-index", { index: 0 }, "m/44'/60'/0'/0/0"],
   ["evm-ledger-live-account-index", { account: 1 }, "m/44'/60'/1'/0/0"],
@@ -41,6 +42,8 @@ const RENDER_FIXTURES: ReadonlyArray<
   ["polkadot-ledger-substrate-account", { account: 0 }, "m/44'/354'/0'/0'/0'"],
   ["solana-ledger-phantom-account", { account: 0 }, "m/44'/501'/0'/0'"],
   ["solana-legacy-ledger-root", {}, "m/44'/501'"],
+  ["solana-bip44-account", { account: 0 }, "m/44'/501'/0'"],
+  ["solana-deprecated-legacy", { account: 0 }, "m/501'/0'/0/0"],
   ["starknet-ready-argent-account", { index: 0 }, "m/44'/9004'/0'/0/0"],
   ["stellar-slip44-account", { account: 0 }, "m/44'/148'/0'"],
   ["nano-ledger-account", { account: 0 }, "m/44'/165'/0'"],
@@ -62,6 +65,8 @@ const MATCHER_FIXTURES: ReadonlyArray<readonly [id: string, source: string]> = [
   ["polkadot-ledger-substrate-account", "^m\\/44'\\/354'\\/(\\d+)'\\/0'\\/0'$"],
   ["solana-ledger-phantom-account", "^m\\/44'\\/501'\\/(\\d+)'\\/0'$"],
   ["solana-legacy-ledger-root", "^m\\/44'\\/501'$"],
+  ["solana-bip44-account", "^m\\/44'\\/501'\\/(\\d+)'$"],
+  ["solana-deprecated-legacy", "^m\\/501'\\/(\\d+)'\\/0\\/0$"],
   ["stellar-slip44-account", "^m\\/44'\\/148'\\/(\\d+)'$"],
   ["nano-ledger-account", "^m\\/44'\\/165'\\/(\\d+)'$"],
   ["starknet-ready-argent-account", "^m\\/44'\\/9004'\\/0'\\/0\\/(\\d+)$"],
@@ -73,6 +78,7 @@ const MATCHER_FIXTURES: ReadonlyArray<readonly [id: string, source: string]> = [
  */
 const UTXO_MATCHER_FIXTURES: ReadonlyArray<readonly [id: string, source: string]> = [
   ["bitcoin-bip44-legacy-account", "^m\\/44'\\/0'\\/\\d+'$"],
+  ["dash-bip44-legacy-account", "^m\\/44'\\/5'\\/\\d+'$"],
   ["bitcoin-bip84-native-segwit-account", "^m\\/84'\\/0'\\/\\d+'$"],
   ["litecoin-bip49-nested-segwit-account", "^m\\/49'\\/2'\\/\\d+'$"],
   ["zcash-bip44-transparent-account", "^m\\/44'\\/133'\\/\\d+'$"],

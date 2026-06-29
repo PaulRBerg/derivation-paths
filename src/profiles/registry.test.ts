@@ -29,6 +29,8 @@ describe("registry integrity", () => {
   it("precomputes example paths from the template", () => {
     expect(profileById("evm-bip44-address-index")?.examplePath).toBe("m/44'/60'/0'/0/0");
     expect(profileById("evm-ledger-live-account-index")?.examplePath).toBe("m/44'/60'/1'/0/0");
+    expect(profileById("dash-bip44-legacy-account")?.examplePath).toBe("m/44'/5'/0'");
+    expect(profileById("dash-bip44-legacy-account")?.template).toBe("m/44'/5'/{account}'");
     expect(profileById("bitcoin-bip84-native-segwit-account")?.template).toBe(
       "m/84'/0'/{account}'"
     );
@@ -62,6 +64,18 @@ describe("recognizePath", () => {
     });
   });
 
+  it("recognizes the Dash BIP44 legacy account path", () => {
+    expect(recognizePath("m/44'/5'/0'", "dash")).toMatchObject({
+      chain: "dash",
+      coinType: 5,
+      profileId: "dash-bip44-legacy-account",
+      scheme: "secp256k1",
+      standard: "bip44-legacy",
+      standardName: "BIP44 Legacy",
+      values: { account: 0 },
+    });
+  });
+
   it("extracts the EVM address index", () => {
     expect(recognizePath("m/44'/60'/0'/0/3")).toMatchObject({
       profileId: "evm-bip44-address-index",
@@ -75,6 +89,22 @@ describe("recognizePath", () => {
       profileId: "evm-ledger-live-account-index",
       values: { account: 1 },
     });
+  });
+
+  it("recognizes Dymension as an EVM-shaped ecosystem", () => {
+    expect(recognizePath("m/44'/60'/0'/0/1", "dymension")).toMatchObject({
+      chain: "evm",
+      coinType: 60,
+      profileId: "evm-bip44-address-index",
+      scheme: "secp256k1",
+      standardName: "BIP44",
+      values: { index: 1 },
+    });
+    expect(profilesForChain("dymension").map((profile) => profile.id)).toEqual([
+      "evm-bip44-address-index",
+      "evm-ledger-live-account-index",
+      "evm-legacy-ledger-mew",
+    ]);
   });
 
   it("honors a chain hint that excludes the only match", () => {
@@ -172,6 +202,36 @@ describe("recognizePath", () => {
       profileId: "namada-shielded-zip32-address",
       values: { account: 0, addressIndex: 7 },
     });
+  });
+
+  it("recognizes the Solana BIP44 account and deprecated-legacy paths", () => {
+    expect(recognizePath("m/44'/501'/0'", "solana")).toMatchObject({
+      chain: "solana",
+      coinType: 501,
+      profileId: "solana-bip44-account",
+      scheme: "ed25519",
+      standard: "solana-bip44-account",
+      standardName: "Solana BIP44 Account",
+      values: { account: 0 },
+    });
+    expect(recognizePath("m/501'/3'/0/0", "solana")).toMatchObject({
+      chain: "solana",
+      coinType: 501,
+      profileId: "solana-deprecated-legacy",
+      scheme: "ed25519",
+      standard: "solana-deprecated-legacy",
+      standardName: "Solana Deprecated Legacy",
+      values: { account: 3 },
+    });
+  });
+
+  it("keeps the four Solana shapes disjoint by depth and prefix", () => {
+    expect(recognizePath("m/44'/501'/0'/0'", "solana")?.profileId).toBe(
+      "solana-ledger-phantom-account"
+    );
+    expect(recognizePath("m/44'/501'", "solana")?.profileId).toBe("solana-legacy-ledger-root");
+    expect(recognizePath("m/44'/501'/0'", "solana")?.profileId).toBe("solana-bip44-account");
+    expect(recognizePath("m/501'/0'/0/0", "solana")?.profileId).toBe("solana-deprecated-legacy");
   });
 });
 
