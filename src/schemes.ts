@@ -15,11 +15,11 @@
  */
 export const SIGNATURE_SCHEMES = [
   "ed25519",
+  "pallas",
+  "redjubjub",
   "secp256k1",
   "secp256r1",
   "stark",
-  "pallas",
-  "redjubjub",
 ] as const;
 
 export type SignatureScheme = (typeof SIGNATURE_SCHEMES)[number];
@@ -29,34 +29,34 @@ export type SignatureScheme = (typeof SIGNATURE_SCHEMES)[number];
  * SLIP-132 xpub families; the rest are per-ecosystem account formats.
  */
 export const ADDRESS_KINDS = [
+  "algorand",
+  "aptos",
+  "cardano-byron",
+  "cardano-shelley",
+  "cosmos",
+  "eos",
+  "evm",
+  "fuel",
+  "handshake",
+  "iota-rebased",
+  "iota-stardust",
+  "multiversx",
+  "namada-shielded",
+  "namada-transparent",
+  "nano",
+  "navcoin",
   "p2pkh",
   "p2sh-p2wpkh",
   "p2wpkh",
-  "evm",
-  "zcash-unified",
-  "iota-rebased",
-  "iota-stardust",
-  "cardano-shelley",
-  "cardano-byron",
-  "cosmos",
-  "substrate",
+  "ripple",
   "solana",
   "starknet",
   "stellar",
-  "multiversx",
-  "waves",
-  "algorand",
-  "aptos",
-  "nano",
-  "namada-transparent",
-  "namada-shielded",
-  "handshake",
-  "ripple",
+  "substrate",
   "tron",
-  "eos",
-  "fuel",
-  "navcoin",
   "verge",
+  "waves",
+  "zcash-unified",
 ] as const;
 
 export type AddressKind = (typeof ADDRESS_KINDS)[number];

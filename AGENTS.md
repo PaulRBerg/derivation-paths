@@ -42,6 +42,10 @@ recognition. It has no runtime dependencies; source lives under `src/`, generate
 
 - Follow the existing TypeScript style: ESM imports with `.js` specifiers, readonly data where practical, explicit
   exported types for public APIs, and narrow helpers near their call sites.
+- Prefer alphabetical ordering where order carries no meaning — e.g. enum-like `as const` member lists that only source
+  a union type (`SIGNATURE_SCHEMES`, `ADDRESS_KINDS`, `STANDARDS`) and object keys. Do not alphabetize where order is
+  semantic: `DERIVATION_PROFILES` (first-match recognition) and positional path-level arrays (`POSITIONAL_FIELDS`,
+  `ORDER`, `SEGMENT_ROLES`).
 - Do not add runtime crypto, key derivation, RPC/explorer, descriptor, wallet-UX, or network dependencies; the package
   scope is pure data and path utilities.
 - Do not commit generated `dist/` output or `.tgz` package artifacts unless the user explicitly asks.
