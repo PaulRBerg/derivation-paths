@@ -55,7 +55,7 @@ export const STANDARDS = [
   "keplr-cosmos",
   "ledger-live",
   "legacy-ledger",
-  "multiversx-ledger",
+  "multiversx-wallet",
   "namada-shielded-modified-zip32",
   "namada-shielded-zip32-account",
   "namada-shielded-zip32-address",

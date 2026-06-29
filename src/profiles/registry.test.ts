@@ -40,6 +40,7 @@ describe("registry integrity", () => {
     expect(profileById("terra-classic-station-legacy-account")?.examplePath).toBe(
       "m/44'/118'/0'/0/0"
     );
+    expect(profileById("multiversx-ledger-account")?.examplePath).toBe("m/44'/508'/0'/0'/0'");
     expect(profileById("neo-legacy-ledger-account")?.examplePath).toBe("m/44'/888'/0'/0/0");
     expect(profileById("namada-transparent-secp256k1")?.examplePath).toBe("m/44'/60'/0'/0/0");
     expect(profileById("namada-shielded-modified-zip32")?.examplePath).toBe(
@@ -158,6 +159,18 @@ describe("recognizePath", () => {
     });
   });
 
+  it("recognizes the MultiversX Wallet extension path", () => {
+    expect(recognizePath("m/44'/508'/0'/0'/0'", "multiversx")).toMatchObject({
+      chain: "multiversx",
+      coinType: 508,
+      profileId: "multiversx-ledger-account",
+      scheme: "ed25519",
+      standard: "multiversx-wallet",
+      standardName: "MultiversX Wallet",
+      values: { account: 0 },
+    });
+  });
+
   it("recognizes the Zcash ZIP-32 shielded account", () => {
     expect(recognizePath("m/32'/133'/0'", "zcash")).toMatchObject({
       chain: "zcash",
@@ -254,13 +267,11 @@ describe("recognizePath", () => {
       standardName: "Cardano Byron Random",
       values: { account: 0 },
     });
-    expect(recognizePath("m/0'/0'", "cardano")?.profileId).toBe(
-      "cardano-byron-random-account"
-    );
+    expect(recognizePath("m/0'/0'", "cardano")?.profileId).toBe("cardano-byron-random-account");
     expect(recognizePath("m/0'/2089694086", "cardano")).toMatchObject({
       profileId: "cardano-byron-random-address",
       standardName: "Cardano Byron Random",
-      values: { account: 0, addressIndex: 2089694086 },
+      values: { account: 0, addressIndex: 2_089_694_086 },
     });
   });
 

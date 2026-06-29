@@ -61,8 +61,8 @@ const ROWS: readonly Row[] = [
     coinType: COIN_TYPES.MULTIVERSX,
     id: "multiversx-ledger-account",
     scheme: "ed25519",
-    standard: "multiversx-ledger",
-    standardName: "MultiversX Ledger",
+    standard: "multiversx-wallet",
+    standardName: "MultiversX Wallet",
     template: ed25519LedgerShape(COIN_TYPES.MULTIVERSX),
   },
   {
