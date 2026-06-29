@@ -67,6 +67,8 @@ export const STANDARDS = [
   "navcoin-bip44",
   "neo-legacy-ledger",
   "obyte-bip44",
+  "radix-babylon",
+  "radix-olympia",
   "ready-argent",
   "ripple-bip44",
   "solana-bip44-account",

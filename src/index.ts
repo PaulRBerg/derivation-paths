@@ -41,6 +41,7 @@ export {
   NAMADA_PROFILES,
   profileById,
   profilesForChain,
+  RADIX_PROFILES,
   RESOLVED_PROFILES,
   type Recognition,
   type ResolvedProfile,

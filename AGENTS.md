@@ -58,6 +58,8 @@ If any command fails, analyze the errors and fix only those related to files you
 - Keep registry IDs stable and unique. `DERIVATION_PROFILES` order matters because `recognizePath` returns the first
   matching profile.
 - Use `minValue` on template params to keep overlapping shapes disjoint instead of adding special-case recognition code.
+- Model mainnet derivation paths only. Testnet/devnet network variants — e.g. Radix Stokenet (`network` id `2'`) — are
+  intentionally out of scope; do not add them unless explicitly requested.
 - Substrate secret-URI parsing is intentionally separate in `src/substrate-suri.ts`; it is not a BIP-32 `m/...` profile.
 - Package exports in `package.json` must stay aligned with public re-exports from `src/index.ts` and subpath entry
   points.

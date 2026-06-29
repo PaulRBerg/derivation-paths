@@ -7,6 +7,7 @@ import { IOTA_PROFILES } from "./iota.js";
 import { LEGACY_PROFILES } from "./legacy.js";
 import { MISC_PROFILES } from "./misc.js";
 import { NAMADA_PROFILES } from "./namada.js";
+import { RADIX_PROFILES } from "./radix.js";
 import { SOLANA_PROFILES } from "./solana.js";
 import { STARKNET_PROFILES } from "./starknet.js";
 import { SUBSTRATE_PROFILES } from "./substrate.js";
@@ -22,6 +23,7 @@ export const DERIVATION_PROFILES: readonly DerivationProfile[] = [
   ...CARDANO_PROFILES,
   ...COSMOS_PROFILES,
   ...NAMADA_PROFILES,
+  ...RADIX_PROFILES,
   ...SUBSTRATE_PROFILES,
   ...SOLANA_PROFILES,
   ...STARKNET_PROFILES,
