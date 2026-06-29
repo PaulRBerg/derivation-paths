@@ -9,7 +9,7 @@ recognition. It has no runtime dependencies; source lives under `src/`, generate
 ## Commands
 
 - Install dependencies with `just install --frozen` when `node_modules/` is missing or stale.
-- Prefer `just` recipes over direct tool calls. `just --list` shows imported recipes from `@sablier/devkit`.
+- Prefer `just` recipes over direct tool calls. `just --list` shows imported recipes from `@prb/devkit`.
 - Use `just test` for the full Vitest suite, or pass a narrow filter/file through `just test <args>`.
 - Use `just type-check` for TypeScript checking and `just full-check` for the CI-style lint/format/type pass.
 - Use `just build` before packaging-sensitive changes. It cleans `dist/`, runs `tsc -p tsconfig.build.json`, and runs
