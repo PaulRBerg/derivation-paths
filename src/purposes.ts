@@ -35,6 +35,7 @@ export const PURPOSE_LABELS: Record<Purpose, string> = {
  */
 export const STANDARDS = [
   "algorand-ledger",
+  "aptos-bip44",
   "aptos-ledger",
   "bip44",
   "bip44-legacy",

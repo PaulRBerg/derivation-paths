@@ -96,6 +96,16 @@ const ROWS: readonly Row[] = [
     template: ed25519LedgerShape(COIN_TYPES.APTOS),
   },
   {
+    addressKind: "aptos",
+    chain: "aptos",
+    coinType: COIN_TYPES.APTOS,
+    id: "aptos-bip44-account",
+    scheme: "secp256k1",
+    standard: "aptos-bip44",
+    standardName: "Aptos BIP44",
+    template: bip44Shape(COIN_TYPES.APTOS),
+  },
+  {
     addressKind: "handshake",
     chain: "handshake",
     coinType: COIN_TYPES.HANDSHAKE,
@@ -180,7 +190,8 @@ const ROWS: readonly Row[] = [
 
 /**
  * Single-chain account profiles: Stellar/MultiversX/Waves/Algorand/Aptos/Nano (ed25519), Neo Legacy (secp256r1), and
- * the secp256k1 BIP44 chains (Handshake, NavCoin, Ripple, Verge, EOS-Vaulta, Fuel, Tron).
+ * the secp256k1 BIP44 chains (Aptos, Handshake, NavCoin, Ripple, Verge, EOS-Vaulta, Fuel, Tron). Aptos carries both an
+ * ed25519 fully-hardened Ledger path and a secp256k1 BIP44 path (last two levels unhardened), matching the Aptos SDK.
  */
 export const MISC_PROFILES: readonly DerivationProfile[] = ROWS.map((row) => ({
   addressKind: row.addressKind,

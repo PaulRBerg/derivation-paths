@@ -159,6 +159,26 @@ describe("recognizePath", () => {
     });
   });
 
+  it("keeps the two Aptos path styles disjoint by curve", () => {
+    expect(recognizePath("m/44'/637'/0'/0'/0'", "aptos")).toMatchObject({
+      chain: "aptos",
+      coinType: 637,
+      profileId: "aptos-ledger-account",
+      scheme: "ed25519",
+      standard: "aptos-ledger",
+      values: { account: 0 },
+    });
+    expect(recognizePath("m/44'/637'/1'/0/0", "aptos")).toMatchObject({
+      chain: "aptos",
+      coinType: 637,
+      profileId: "aptos-bip44-account",
+      scheme: "secp256k1",
+      standard: "aptos-bip44",
+      standardName: "Aptos BIP44",
+      values: { account: 1 },
+    });
+  });
+
   it("recognizes the MultiversX Wallet extension path", () => {
     expect(recognizePath("m/44'/508'/0'/0'/0'", "multiversx")).toMatchObject({
       chain: "multiversx",
