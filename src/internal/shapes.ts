@@ -1,5 +1,5 @@
 import type { Template } from "../path/template.js";
-import { lit, vr } from "../path/template.js";
+import { lit, nvr, vr } from "../path/template.js";
 
 /**
  * Shape builders that replace the four original path-builder closures. Each returns a {@link Template} — the single
@@ -46,3 +46,6 @@ export const evmAddressIndexShape = (coinType: number): Template => [
   lit(0),
   vr("index"),
 ];
+
+/** `index={index}` — native Nano/RaiBlocks seed account index evidence. */
+export const nativeIndexShape = (): Template => [nvr("index", "index=")];

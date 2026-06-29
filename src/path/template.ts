@@ -4,9 +4,10 @@ import { HARDENED_OFFSET } from "./segment.js";
 /**
  * The single source of truth for a derivation standard.
  *
- * A {@link Template} is an ordered list of {@link Segment}s describing every level after the `m` master node. The same
- * structure drives both directions: {@link render} walks it to produce a concrete path string, and {@link toMatcher}
- * walks it to produce the recognizer regex. Because construction and recognition read the same data, they cannot drift.
+ * A {@link Template} is an ordered list of {@link Segment}s describing either every level after the `m` master node or a
+ * native non-BIP evidence string such as `index=0`. The same structure drives both directions: {@link render} walks it
+ * to produce a concrete path string, and {@link toMatcher} walks it to produce the recognizer regex. Because
+ * construction and recognition read the same data, they cannot drift.
  */
 export type Segment =
   | { readonly kind: "fixed"; readonly value: number; readonly hardened: boolean }
@@ -14,6 +15,12 @@ export type Segment =
       readonly kind: "param";
       readonly role: Role;
       readonly hardened: boolean;
+      readonly minValue?: number;
+    }
+  | {
+      readonly kind: "native-param";
+      readonly prefix: string;
+      readonly role: Role;
       readonly minValue?: number;
     };
 
@@ -35,15 +42,33 @@ export const vr = (role: Role, hardened = false, minValue?: number): Segment =>
     ? { hardened, kind: "param", role }
     : { hardened, kind: "param", minValue, role };
 
+/** Native non-BIP evidence constructor, e.g. `nvr("index", "index=")` -> `index={index}`. */
+export const nvr = (role: Role, prefix: string, minValue?: number): Segment =>
+  minValue === undefined
+    ? { kind: "native-param", prefix, role }
+    : { kind: "native-param", minValue, prefix, role };
+
 const tick = (hardened: boolean): string => (hardened ? "'" : "");
 
 const join = (parts: readonly string[]): string => (parts.length > 0 ? `/${parts.join("/")}` : "");
 
-/** The param segments of a template, in path order. */
-const params = (template: Template): readonly Extract<Segment, { kind: "param" }>[] =>
+const templateKind = (template: Template): "bip" | "native" => {
+  const hasNative = template.some((segment) => segment.kind === "native-param");
+  if (hasNative && template.some((segment) => segment.kind !== "native-param")) {
+    throw new Error("mixed BIP and native template segments are not supported");
+  }
+  return hasNative ? "native" : "bip";
+};
+
+const variableSegments = (
+  template: Template
+): readonly Extract<Segment, { kind: "native-param" | "param" }>[] =>
   template.filter(
-    (segment): segment is Extract<Segment, { kind: "param" }> => segment.kind === "param"
+    (segment): segment is Extract<Segment, { kind: "native-param" | "param" }> =>
+      segment.kind === "param" || segment.kind === "native-param"
   );
+
+const escapeRegex = (value: string): string => value.replace(/[\\^$.*+?()[\]{}|]/gu, "\\$&");
 
 /**
  * Direction A — render a template to a concrete path. Every param role must be supplied in `values`.
@@ -51,6 +76,7 @@ const params = (template: Template): readonly Extract<Segment, { kind: "param" }
  * @example render(evmAddressIndexShape(60), { index: 5 }) // "m/44'/60'/0'/0/5"
  */
 export function render(template: Template, values: RoleValues = {}): DerivationPath {
+  const kind = templateKind(template);
   const parts = template.map((segment) => {
     if (segment.kind === "fixed") {
       return `${segment.value}${tick(segment.hardened)}`;
@@ -59,19 +85,27 @@ export function render(template: Template, values: RoleValues = {}): DerivationP
     if (value === undefined) {
       throw new Error(`render: missing value for role "${segment.role}"`);
     }
+    if (segment.kind === "native-param") {
+      return `${segment.prefix}${value}`;
+    }
     return `${value}${tick(segment.hardened)}`;
   });
-  return `m${join(parts)}` as DerivationPath;
+  return (kind === "native" ? parts.join("") : `m${join(parts)}`) as DerivationPath;
 }
 
 /** Render a template to its placeholder string, e.g. `m/44'/60'/0'/0/{index}`. */
 export function renderTemplate(template: Template): PathTemplate {
-  const parts = template.map((segment) =>
-    segment.kind === "fixed"
-      ? `${segment.value}${tick(segment.hardened)}`
-      : `{${segment.role}}${tick(segment.hardened)}`
-  );
-  return `m${join(parts)}` as PathTemplate;
+  const kind = templateKind(template);
+  const parts = template.map((segment) => {
+    if (segment.kind === "native-param") {
+      return `${segment.prefix}{${segment.role}}`;
+    }
+    if (segment.kind === "fixed") {
+      return `${segment.value}${tick(segment.hardened)}`;
+    }
+    return `{${segment.role}}${tick(segment.hardened)}`;
+  });
+  return (kind === "native" ? parts.join("") : `m${join(parts)}`) as PathTemplate;
 }
 
 type CompiledMatcher = { regex: RegExp; captures: readonly Role[] };
@@ -93,15 +127,23 @@ export function toMatcher(template: Template): CompiledMatcher {
   if (cached !== undefined) {
     return cached;
   }
+  const kind = templateKind(template);
   const captures: Role[] = [];
   const body = template.map((segment) => {
+    if (segment.kind === "native-param") {
+      captures.push(segment.role);
+      return `${escapeRegex(segment.prefix)}(\\d+)`;
+    }
     if (segment.kind === "fixed") {
       return `${segment.value}${tick(segment.hardened)}`;
     }
     captures.push(segment.role);
     return `(\\d+)${tick(segment.hardened)}`;
   });
-  const source = `^m${body.length > 0 ? `\\/${body.join("\\/")}` : ""}$`;
+  const source =
+    kind === "native"
+      ? `^${body.join("")}$`
+      : `^m${body.length > 0 ? `\\/${body.join("\\/")}` : ""}$`;
   const compiled: CompiledMatcher = { captures, regex: new RegExp(source, "u") };
   matcherCache.set(template, compiled);
   return compiled;
@@ -118,7 +160,7 @@ export function match(template: Template, path: string): RoleValues | undefined 
   if (found === null) {
     return undefined;
   }
-  const variables = params(template);
+  const variables = variableSegments(template);
   const values: RoleValues = {};
   for (const [position, segment] of variables.entries()) {
     const value = Number.parseInt(found[position + 1], 10);

@@ -2,6 +2,7 @@ export { CARDANO_PROFILES } from "./cardano.js";
 export { COSMOS_PROFILES } from "./cosmos.js";
 export { EVM_PROFILES } from "./evm.js";
 export { IOTA_PROFILES } from "./iota.js";
+export { LEGACY_PROFILES } from "./legacy.js";
 export { MISC_PROFILES } from "./misc.js";
 export { NAMADA_PROFILES } from "./namada.js";
 export {

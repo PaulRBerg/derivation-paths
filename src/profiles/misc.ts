@@ -1,4 +1,9 @@
-import { bip44AccountOnlyShape, bip44Shape, ed25519LedgerShape } from "../internal/shapes.js";
+import {
+  bip44AccountOnlyShape,
+  bip44Shape,
+  ed25519LedgerShape,
+  nativeIndexShape,
+} from "../internal/shapes.js";
 import type { Template } from "../path/template.js";
 import type { Standard } from "../purposes.js";
 import type { AddressKind, SignatureScheme } from "../schemes.js";
@@ -10,6 +15,7 @@ type Row = {
   readonly chain: string;
   readonly ecosystems?: readonly string[];
   readonly coinType: number;
+  readonly purpose?: number | null;
   readonly scheme: SignatureScheme;
   readonly addressKind: AddressKind;
   readonly standardName: string;
@@ -37,6 +43,17 @@ const ROWS: readonly Row[] = [
     standard: "nano-ledger",
     standardName: "Nano Ledger",
     template: bip44AccountOnlyShape(COIN_TYPES.NANO),
+  },
+  {
+    addressKind: "nano",
+    chain: "nano",
+    coinType: COIN_TYPES.NANO,
+    id: "nano-legacy-seed-account",
+    purpose: null,
+    scheme: "ed25519",
+    standard: "nano-legacy-seed",
+    standardName: "Nano Legacy Seed",
+    template: nativeIndexShape(),
   },
   {
     addressKind: "multiversx",
@@ -171,7 +188,7 @@ export const MISC_PROFILES: readonly DerivationProfile[] = ROWS.map((row) => ({
   coinType: row.coinType,
   ecosystems: row.ecosystems ?? [row.chain],
   id: row.id,
-  purpose: 44,
+  purpose: row.purpose ?? 44,
   scheme: row.scheme,
   standard: row.standard,
   standardName: row.standardName,

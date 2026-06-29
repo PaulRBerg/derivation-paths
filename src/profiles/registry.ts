@@ -4,6 +4,7 @@ import { CARDANO_PROFILES } from "./cardano.js";
 import { COSMOS_PROFILES } from "./cosmos.js";
 import { EVM_PROFILES } from "./evm.js";
 import { IOTA_PROFILES } from "./iota.js";
+import { LEGACY_PROFILES } from "./legacy.js";
 import { MISC_PROFILES } from "./misc.js";
 import { NAMADA_PROFILES } from "./namada.js";
 import { SOLANA_PROFILES } from "./solana.js";
@@ -26,13 +27,14 @@ export const DERIVATION_PROFILES: readonly DerivationProfile[] = [
   ...STARKNET_PROFILES,
   ...ZCASH_SHIELDED_PROFILES,
   ...MISC_PROFILES,
+  ...LEGACY_PROFILES,
 ];
 
 /** Bind each param to its minimum (its `minValue`, else `0`) for a representative example path. */
 const exampleValues = (template: Template): RoleValues => {
   const values: RoleValues = {};
   for (const segment of template) {
-    if (segment.kind === "param") {
+    if (segment.kind === "param" || segment.kind === "native-param") {
       values[segment.role] = segment.minValue ?? 0;
     }
   }

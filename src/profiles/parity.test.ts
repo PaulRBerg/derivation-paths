@@ -47,6 +47,11 @@ const RENDER_FIXTURES: ReadonlyArray<
   ["starknet-ready-argent-account", { index: 0 }, "m/44'/9004'/0'/0/0"],
   ["stellar-slip44-account", { account: 0 }, "m/44'/148'/0'"],
   ["nano-ledger-account", { account: 0 }, "m/44'/165'/0'"],
+  ["nano-legacy-seed-account", { index: 0 }, "index=0"],
+  ["obyte-bip44-account", { account: 0 }, "m/44'/0'/0'"],
+  ["vertcoin-bip44-account", { account: 0 }, "m/44'/28'/0'"],
+  ["vertcoin-electrum-legacy", {}, "m/0/0"],
+  ["hush-webwallet", { index: 0 }, "m/0"],
 ];
 
 /**
@@ -69,6 +74,7 @@ const MATCHER_FIXTURES: ReadonlyArray<readonly [id: string, source: string]> = [
   ["solana-deprecated-legacy", "^m\\/501'\\/(\\d+)'\\/0\\/0$"],
   ["stellar-slip44-account", "^m\\/44'\\/148'\\/(\\d+)'$"],
   ["nano-ledger-account", "^m\\/44'\\/165'\\/(\\d+)'$"],
+  ["nano-legacy-seed-account", "^index=(\\d+)$"],
   ["starknet-ready-argent-account", "^m\\/44'\\/9004'\\/0'\\/0\\/(\\d+)$"],
 ];
 
@@ -83,6 +89,8 @@ const UTXO_MATCHER_FIXTURES: ReadonlyArray<readonly [id: string, source: string]
   ["litecoin-bip49-nested-segwit-account", "^m\\/49'\\/2'\\/\\d+'$"],
   ["zcash-bip44-transparent-account", "^m\\/44'\\/133'\\/\\d+'$"],
   ["cardano-byron-random-account", "^m\\/\\d+'\\/0'$"],
+  ["obyte-bip44-account", "^m\\/44'\\/0'\\/\\d+'$"],
+  ["vertcoin-bip44-account", "^m\\/44'\\/28'\\/\\d+'$"],
 ];
 
 describe("parity with original closures", () => {

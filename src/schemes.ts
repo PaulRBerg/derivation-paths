@@ -46,6 +46,7 @@ export const ADDRESS_KINDS = [
   "nano",
   "navcoin",
   "neo-legacy",
+  "obyte",
   "p2pkh",
   "p2sh-p2wpkh",
   "p2wpkh",

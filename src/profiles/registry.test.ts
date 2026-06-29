@@ -50,6 +50,8 @@ describe("registry integrity", () => {
     expect(profileById("namada-shielded-zip32-address")?.template).toBe(
       "m/32'/877'/{account}'/{addressIndex}"
     );
+    expect(profileById("nano-legacy-seed-account")?.examplePath).toBe("index=0");
+    expect(profileById("nano-legacy-seed-account")?.template).toBe("index={index}");
   });
 });
 
@@ -225,6 +227,18 @@ describe("recognizePath", () => {
     });
   });
 
+  it("recognizes the native Nano legacy seed index", () => {
+    expect(recognizePath("index=3", "nano")).toMatchObject({
+      chain: "nano",
+      coinType: 165,
+      profileId: "nano-legacy-seed-account",
+      scheme: "ed25519",
+      standard: "nano-legacy-seed",
+      standardName: "Nano Legacy Seed",
+      values: { index: 3 },
+    });
+  });
+
   it("keeps the four Solana shapes disjoint by depth and prefix", () => {
     expect(recognizePath("m/44'/501'/0'/0'", "solana")?.profileId).toBe(
       "solana-ledger-phantom-account"
@@ -266,6 +280,10 @@ describe("profilesForChain", () => {
     expect(profilesForChain("neo-legacy").map((profile) => profile.id)).toEqual([
       "neo-legacy-ledger-account",
     ]);
+    expect(profilesForChain("nano").map((profile) => profile.id)).toEqual([
+      "nano-ledger-account",
+      "nano-legacy-seed-account",
+    ]);
     expect(profilesForChain("avail").map((profile) => profile.id)).toContain(
       "polkadot-ledger-substrate-account"
     );
@@ -276,5 +294,55 @@ describe("profilesForChain", () => {
       "namada-shielded-zip32-account",
       "namada-shielded-zip32-address",
     ]);
+  });
+});
+
+describe("legacy profiles", () => {
+  it("precomputes example paths and templates", () => {
+    expect(profileById("obyte-bip44-account")?.template).toBe("m/44'/0'/{account}'");
+    expect(profileById("vertcoin-bip44-account")?.examplePath).toBe("m/44'/28'/0'");
+    expect(profileById("vertcoin-electrum-legacy")?.examplePath).toBe("m/0/0");
+    expect(profileById("hush-webwallet")?.template).toBe("m/{index}");
+  });
+
+  it("keeps Obyte disjoint from Bitcoin via the chain hint", () => {
+    // Obyte reuses coin type 0, so the matcher is identical to Bitcoin's. UTXO profiles are ordered
+    // first, so a hint-less path still resolves to Bitcoin — no regression.
+    expect(recognizePath("m/44'/0'/0'")?.profileId).toBe("bitcoin-bip44-legacy-account");
+    expect(recognizePath("m/44'/0'/0'", "obyte")).toMatchObject({
+      chain: "obyte",
+      coinType: 0,
+      profileId: "obyte-bip44-account",
+      scheme: "secp256k1",
+      standard: "obyte-bip44",
+      standardName: "Obyte BIP44",
+      values: { account: 0 },
+    });
+    expect(recognizePath("m/44'/0'/0'", "byteball")?.profileId).toBe("obyte-bip44-account");
+  });
+
+  it("recognizes the Vertcoin BIP44 account and Electrum legacy paths", () => {
+    expect(recognizePath("m/44'/28'/0'", "vertcoin")).toMatchObject({
+      chain: "vertcoin",
+      coinType: 28,
+      profileId: "vertcoin-bip44-account",
+      standard: "vertcoin-bip44",
+      values: { account: 0 },
+    });
+    expect(recognizePath("m/0/0", "vertcoin")).toMatchObject({
+      profileId: "vertcoin-electrum-legacy",
+      standardName: "Vertcoin Electrum Legacy",
+      values: {},
+    });
+  });
+
+  it("recognizes the Hush flat webwallet path via chain hint", () => {
+    expect(recognizePath("m/0", "hush")).toMatchObject({
+      chain: "hush",
+      profileId: "hush-webwallet",
+      standardName: "Hush Webwallet",
+      values: { index: 0 },
+    });
+    expect(recognizePath("m/5", "hush")?.values).toEqual({ index: 5 });
   });
 });

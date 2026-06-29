@@ -18,6 +18,7 @@ export const COIN_TYPES = {
   ETHEREUM: 60,
   FUEL: 1_179_993_420,
   HANDSHAKE: 5353,
+  HUSH: 197,
   IOTA: 4218,
   LITECOIN: 2,
   MULTIVERSX: 508,
@@ -33,6 +34,7 @@ export const COIN_TYPES = {
   TERRA: 330,
   TRON: 195,
   VERGE: 77,
+  VERTCOIN: 28,
   WAVES: 5_741_564,
   ZCASH: 133,
 } as const;
@@ -62,6 +64,7 @@ export const COIN_TYPE_INFO = {
   ETHEREUM: { coinType: COIN_TYPES.ETHEREUM, key: "ETHEREUM", name: "Ethereum", symbol: "ETH" },
   FUEL: { coinType: COIN_TYPES.FUEL, key: "FUEL", name: "Fuel", symbol: "FUEL" },
   HANDSHAKE: { coinType: COIN_TYPES.HANDSHAKE, key: "HANDSHAKE", name: "Handshake", symbol: "HNS" },
+  HUSH: { coinType: COIN_TYPES.HUSH, key: "HUSH", name: "Hush", symbol: "HUSH" },
   IOTA: { coinType: COIN_TYPES.IOTA, key: "IOTA", name: "IOTA", symbol: "IOTA" },
   LITECOIN: { coinType: COIN_TYPES.LITECOIN, key: "LITECOIN", name: "Litecoin", symbol: "LTC" },
   NAMADA: { coinType: COIN_TYPES.NAMADA, key: "NAMADA", name: "Namada", symbol: "NAM" },
@@ -76,6 +79,7 @@ export const COIN_TYPE_INFO = {
   TERRA: { coinType: COIN_TYPES.TERRA, key: "TERRA", name: "Terra", symbol: "LUNA" },
   TRON: { coinType: COIN_TYPES.TRON, key: "TRON", name: "Tron", symbol: "TRX" },
   VERGE: { coinType: COIN_TYPES.VERGE, key: "VERGE", name: "Verge", symbol: "XVG" },
+  VERTCOIN: { coinType: COIN_TYPES.VERTCOIN, key: "VERTCOIN", name: "Vertcoin", symbol: "VTC" },
   WAVES: { coinType: COIN_TYPES.WAVES, key: "WAVES", name: "Waves", symbol: "WAVES" },
   ZCASH: { coinType: COIN_TYPES.ZCASH, key: "ZCASH", name: "Zcash", symbol: "ZEC" },
   BITCOIN_CASH: {

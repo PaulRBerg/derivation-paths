@@ -24,6 +24,7 @@ export {
 export {
   lit,
   match,
+  nvr,
   type RoleValues,
   render,
   renderTemplate,

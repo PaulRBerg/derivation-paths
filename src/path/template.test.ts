@@ -4,7 +4,9 @@ import type { RoleValues, Template } from "./template.js";
 import { match, render } from "./template.js";
 
 const paramRoles = (template: Template) =>
-  template.flatMap((segment) => (segment.kind === "param" ? [segment] : []));
+  template.flatMap((segment) =>
+    segment.kind === "param" || segment.kind === "native-param" ? [segment] : []
+  );
 
 /** Assign every param the same test value, clamped up to its `minValue`. */
 const bind = (template: Template, value: number): RoleValues => {
