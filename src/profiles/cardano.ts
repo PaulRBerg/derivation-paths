@@ -4,7 +4,7 @@ import { PURPOSES } from "../purposes.js";
 import { COIN_TYPES } from "../slip44.js";
 import type { DerivationProfile } from "./types.js";
 
-/** Cardano: Shelley (CIP-1852), Byron Icarus (BIP44), and Byron random (`m/{account}'/0'`, no purpose level). */
+/** Cardano: Shelley (CIP-1852), Byron Icarus (BIP44), and Byron random (no purpose level). */
 export const CARDANO_PROFILES: readonly DerivationProfile[] = [
   {
     addressKind: "cardano-shelley",
@@ -41,11 +41,35 @@ export const CARDANO_PROFILES: readonly DerivationProfile[] = [
     chain: "cardano",
     coinType: COIN_TYPES.CARDANO,
     ecosystems: ["cardano"],
+    id: "cardano-byron-random-branch",
+    purpose: null,
+    scheme: "ed25519",
+    standard: "cardano-byron-random",
+    standardName: "Cardano Byron Random",
+    template: [vr("account", true)],
+  },
+  {
+    addressKind: "cardano-byron",
+    chain: "cardano",
+    coinType: COIN_TYPES.CARDANO,
+    ecosystems: ["cardano"],
     id: "cardano-byron-random-account",
     purpose: null,
     scheme: "ed25519",
     standard: "cardano-byron-random",
     standardName: "Cardano Byron Random",
     template: [vr("account", true), lit(0, true)],
+  },
+  {
+    addressKind: "cardano-byron",
+    chain: "cardano",
+    coinType: COIN_TYPES.CARDANO,
+    ecosystems: ["cardano"],
+    id: "cardano-byron-random-address",
+    purpose: null,
+    scheme: "ed25519",
+    standard: "cardano-byron-random",
+    standardName: "Cardano Byron Random",
+    template: [vr("account", true), vr("addressIndex")],
   },
 ];

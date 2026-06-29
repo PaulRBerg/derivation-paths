@@ -50,6 +50,11 @@ describe("registry integrity", () => {
     expect(profileById("namada-shielded-zip32-address")?.template).toBe(
       "m/32'/877'/{account}'/{addressIndex}"
     );
+    expect(profileById("cardano-byron-random-branch")?.template).toBe("m/{account}'");
+    expect(profileById("cardano-byron-random-account")?.template).toBe("m/{account}'/0'");
+    expect(profileById("cardano-byron-random-address")?.template).toBe(
+      "m/{account}'/{addressIndex}"
+    );
     expect(profileById("nano-legacy-seed-account")?.examplePath).toBe("index=0");
     expect(profileById("nano-legacy-seed-account")?.template).toBe("index={index}");
   });
@@ -236,6 +241,26 @@ describe("recognizePath", () => {
       standard: "nano-legacy-seed",
       standardName: "Nano Legacy Seed",
       values: { index: 3 },
+    });
+  });
+
+  it("recognizes Cardano Byron Random branch and address paths", () => {
+    expect(recognizePath("m/0'", "cardano")).toMatchObject({
+      chain: "cardano",
+      coinType: 1815,
+      profileId: "cardano-byron-random-branch",
+      scheme: "ed25519",
+      standard: "cardano-byron-random",
+      standardName: "Cardano Byron Random",
+      values: { account: 0 },
+    });
+    expect(recognizePath("m/0'/0'", "cardano")?.profileId).toBe(
+      "cardano-byron-random-account"
+    );
+    expect(recognizePath("m/0'/2089694086", "cardano")).toMatchObject({
+      profileId: "cardano-byron-random-address",
+      standardName: "Cardano Byron Random",
+      values: { account: 0, addressIndex: 2089694086 },
     });
   });
 
