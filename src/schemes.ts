@@ -45,6 +45,7 @@ export const ADDRESS_KINDS = [
   "namada-transparent",
   "nano",
   "navcoin",
+  "neo-legacy",
   "p2pkh",
   "p2sh-p2wpkh",
   "p2wpkh",

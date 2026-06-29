@@ -99,6 +99,16 @@ const ROWS: readonly Row[] = [
     template: bip44Shape(COIN_TYPES.NAVCOIN),
   },
   {
+    addressKind: "neo-legacy",
+    chain: "neo-legacy",
+    coinType: COIN_TYPES.NEO,
+    id: "neo-legacy-ledger-account",
+    scheme: "secp256r1",
+    standard: "neo-legacy-ledger",
+    standardName: "Neo Legacy Ledger",
+    template: bip44Shape(COIN_TYPES.NEO),
+  },
+  {
     addressKind: "ripple",
     chain: "ripple",
     coinType: COIN_TYPES.RIPPLE,
@@ -152,8 +162,8 @@ const ROWS: readonly Row[] = [
 ];
 
 /**
- * Single-chain account profiles: Stellar/MultiversX/Waves/Algorand/Aptos/Nano (ed25519) and the secp256k1 BIP44 chains
- * (Handshake, NavCoin, Ripple, Verge, EOS-Vaulta, Fuel, Tron).
+ * Single-chain account profiles: Stellar/MultiversX/Waves/Algorand/Aptos/Nano (ed25519), Neo Legacy (secp256r1), and
+ * the secp256k1 BIP44 chains (Handshake, NavCoin, Ripple, Verge, EOS-Vaulta, Fuel, Tron).
  */
 export const MISC_PROFILES: readonly DerivationProfile[] = ROWS.map((row) => ({
   addressKind: row.addressKind,

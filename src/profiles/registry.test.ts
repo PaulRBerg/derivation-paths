@@ -34,6 +34,11 @@ describe("registry integrity", () => {
     );
     expect(profileById("zcash-zip32-account")?.examplePath).toBe("m/32'/133'/0'");
     expect(profileById("zcash-zip32-account")?.template).toBe("m/32'/133'/{account}'");
+    expect(profileById("terra-classic-station-account")?.examplePath).toBe("m/44'/330'/0'/0/0");
+    expect(profileById("terra-classic-station-legacy-account")?.examplePath).toBe(
+      "m/44'/118'/0'/0/0"
+    );
+    expect(profileById("neo-legacy-ledger-account")?.examplePath).toBe("m/44'/888'/0'/0/0");
     expect(profileById("namada-transparent-secp256k1")?.examplePath).toBe("m/44'/60'/0'/0/0");
     expect(profileById("namada-shielded-modified-zip32")?.examplePath).toBe(
       "m/44'/877'/0'/0'/2147483647'"
@@ -84,6 +89,36 @@ describe("recognizePath", () => {
   it("resolves a shared cosmos shape for any family member", () => {
     expect(recognizePath("m/44'/118'/2'/0/0", "osmosis")?.profileId).toBe("cosmos-keplr-account");
     expect(recognizePath("m/44'/118'/2'/0/0", "celestia")?.standardName).toBe("Keplr Cosmos");
+  });
+
+  it("recognizes Terra Classic ledger and station profiles", () => {
+    expect(recognizePath("m/44'/330'/0'/0/0", "terra-classic")).toMatchObject({
+      chain: "terra",
+      profileId: "terra-ledger-account",
+      standardName: "Terra Ledger",
+      values: { account: 0 },
+    });
+    expect(
+      recognizeAll("m/44'/330'/0'/0/0", "terra-classic").map((entry) => entry.profileId)
+    ).toEqual(["terra-ledger-account", "terra-classic-station-account"]);
+    expect(recognizePath("m/44'/118'/0'/0/0", "terra-classic")).toMatchObject({
+      chain: "terra-classic",
+      profileId: "terra-classic-station-legacy-account",
+      standardName: "Terra Station Legacy",
+      values: { account: 0 },
+    });
+  });
+
+  it("recognizes the Neo Legacy Ledger P-256 path", () => {
+    expect(recognizePath("m/44'/888'/0'/0/0", "neo-legacy")).toMatchObject({
+      chain: "neo-legacy",
+      coinType: 888,
+      profileId: "neo-legacy-ledger-account",
+      scheme: "secp256r1",
+      standard: "neo-legacy-ledger",
+      standardName: "Neo Legacy Ledger",
+      values: { account: 0 },
+    });
   });
 
   it("recognizes the Zcash ZIP-32 shielded account", () => {
@@ -163,6 +198,14 @@ describe("profilesForChain", () => {
     expect(profilesForChain("osmosis").map((profile) => profile.id)).toContain(
       "cosmos-keplr-account"
     );
+    expect(profilesForChain("terra-classic").map((profile) => profile.id)).toEqual([
+      "terra-ledger-account",
+      "terra-classic-station-account",
+      "terra-classic-station-legacy-account",
+    ]);
+    expect(profilesForChain("neo-legacy").map((profile) => profile.id)).toEqual([
+      "neo-legacy-ledger-account",
+    ]);
     expect(profilesForChain("avail").map((profile) => profile.id)).toContain(
       "polkadot-ledger-substrate-account"
     );
