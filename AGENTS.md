@@ -16,6 +16,39 @@ recognition. It has no runtime dependencies; source lives under `src/`, generate
   `npm pack --quiet`, which writes an ignored `.tgz`.
 - For Markdown edits, use `just prettier-write <paths>` and verify with `just prettier-check <paths>`.
 
+## Lint Rules
+
+After generating code, run these commands in order.
+
+File argument rules:
+
+- Changed fewer than 10 files? Pass specific paths or globs.
+- Changed 10+ files? Omit file arguments to process all files.
+
+Command sequence:
+
+1. Identify which file types changed.
+2. `just biome-lint <files>` - lint JS/TS/JSON/JSONC files; skip if none changed.
+3. `just prettier-check <files>` - check Markdown/YAML formatting; skip if none changed.
+4. `just type-check` - verify TypeScript types on the whole project when `.ts` files changed.
+
+Examples:
+
+```bash
+# Fewer than 10 files: use specific paths and/or globs
+just biome-lint src/index.ts package.json
+just prettier-check AGENTS.md
+
+# 10+ files: run default commands
+just biome-lint
+just prettier-check
+
+# TypeScript check runs on the whole project
+just type-check
+```
+
+If any command fails, analyze the errors and fix only those related to files you changed.
+
 ## Architecture
 
 - `src/path/template.ts` is the single source of truth for path templates: the same `Template` drives `render`,
