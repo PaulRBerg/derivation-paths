@@ -36,6 +36,7 @@ export {
   EVM_PROFILES,
   IOTA_PROFILES,
   MISC_PROFILES,
+  NAMADA_PROFILES,
   profileById,
   profilesForChain,
   RESOLVED_PROFILES,

@@ -34,6 +34,15 @@ describe("registry integrity", () => {
     );
     expect(profileById("zcash-zip32-account")?.examplePath).toBe("m/32'/133'/0'");
     expect(profileById("zcash-zip32-account")?.template).toBe("m/32'/133'/{account}'");
+    expect(profileById("namada-transparent-secp256k1")?.examplePath).toBe("m/44'/60'/0'/0/0");
+    expect(profileById("namada-shielded-modified-zip32")?.examplePath).toBe(
+      "m/44'/877'/0'/0'/2147483647'"
+    );
+    expect(profileById("namada-transparent-ed25519")?.examplePath).toBe("m/44'/877'/0'/0'/0'");
+    expect(profileById("namada-shielded-zip32-account")?.template).toBe("m/32'/877'/{account}'");
+    expect(profileById("namada-shielded-zip32-address")?.template).toBe(
+      "m/32'/877'/{account}'/{addressIndex}"
+    );
   });
 });
 
@@ -94,6 +103,41 @@ describe("recognizePath", () => {
     );
     expect(recognizePath("m/32'/133'/0'", "zcash")?.profileId).toBe("zcash-zip32-account");
   });
+
+  it("recognizes Namada transparent and shielded paths", () => {
+    expect(recognizePath("m/44'/60'/0'/0/0", "namada")).toMatchObject({
+      chain: "namada",
+      coinType: 60,
+      profileId: "namada-transparent-secp256k1",
+      scheme: "secp256k1",
+      standard: "namada-transparent-secp256k1",
+      standardName: "Namada Transparent Secp256k1",
+      values: { account: 0, addressIndex: 0, change: 0 },
+    });
+    expect(recognizePath("m/44'/877'/0'/0'/0'", "namada")).toMatchObject({
+      coinType: 877,
+      profileId: "namada-transparent-ed25519",
+      scheme: "ed25519",
+      standardName: "Namada Transparent Ed25519",
+      values: { account: 0, addressIndex: 0, change: 0 },
+    });
+    expect(recognizePath("m/44'/877'/0'/0'/2147483647'", "namada")).toMatchObject({
+      profileId: "namada-shielded-modified-zip32",
+      scheme: "ed25519",
+      standardName: "Namada Shielded Modified ZIP32",
+      values: {},
+    });
+    expect(recognizePath("m/32'/877'/0'", "namada")).toMatchObject({
+      profileId: "namada-shielded-zip32-account",
+      scheme: "redjubjub",
+      standardName: "Namada Shielded ZIP32 Account",
+      values: { account: 0 },
+    });
+    expect(recognizePath("m/32'/877'/0'/7", "namada")).toMatchObject({
+      profileId: "namada-shielded-zip32-address",
+      values: { account: 0, addressIndex: 7 },
+    });
+  });
 });
 
 describe("recognizeAll", () => {
@@ -122,5 +166,12 @@ describe("profilesForChain", () => {
     expect(profilesForChain("avail").map((profile) => profile.id)).toContain(
       "polkadot-ledger-substrate-account"
     );
+    expect(profilesForChain("namada").map((profile) => profile.id)).toEqual([
+      "namada-transparent-secp256k1",
+      "namada-shielded-modified-zip32",
+      "namada-transparent-ed25519",
+      "namada-shielded-zip32-account",
+      "namada-shielded-zip32-address",
+    ]);
   });
 });

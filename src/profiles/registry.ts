@@ -5,6 +5,7 @@ import { COSMOS_PROFILES } from "./cosmos.js";
 import { EVM_PROFILES } from "./evm.js";
 import { IOTA_PROFILES } from "./iota.js";
 import { MISC_PROFILES } from "./misc.js";
+import { NAMADA_PROFILES } from "./namada.js";
 import { SOLANA_PROFILES } from "./solana.js";
 import { STARKNET_PROFILES } from "./starknet.js";
 import { SUBSTRATE_PROFILES } from "./substrate.js";
@@ -19,6 +20,7 @@ export const DERIVATION_PROFILES: readonly DerivationProfile[] = [
   ...IOTA_PROFILES,
   ...CARDANO_PROFILES,
   ...COSMOS_PROFILES,
+  ...NAMADA_PROFILES,
   ...SUBSTRATE_PROFILES,
   ...SOLANA_PROFILES,
   ...STARKNET_PROFILES,

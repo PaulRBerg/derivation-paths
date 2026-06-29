@@ -3,6 +3,7 @@ export { COSMOS_PROFILES } from "./cosmos.js";
 export { EVM_PROFILES } from "./evm.js";
 export { IOTA_PROFILES } from "./iota.js";
 export { MISC_PROFILES } from "./misc.js";
+export { NAMADA_PROFILES } from "./namada.js";
 export {
   DERIVATION_PROFILES,
   profileById,

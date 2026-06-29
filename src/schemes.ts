@@ -10,8 +10,17 @@
  *
  * `pallas` covers Zcash Orchard: spend-authorization keys are RedPallas signatures over the Pallas curve, derived via
  * ZIP-32 (not BIP-32).
+ *
+ * `redjubjub` covers Sapling/MASP shielded spend-authorization keys, also derived via ZIP-32.
  */
-export const SIGNATURE_SCHEMES = ["ed25519", "secp256k1", "secp256r1", "stark", "pallas"] as const;
+export const SIGNATURE_SCHEMES = [
+  "ed25519",
+  "secp256k1",
+  "secp256r1",
+  "stark",
+  "pallas",
+  "redjubjub",
+] as const;
 
 export type SignatureScheme = (typeof SIGNATURE_SCHEMES)[number];
 
@@ -39,6 +48,8 @@ export const ADDRESS_KINDS = [
   "algorand",
   "aptos",
   "nano",
+  "namada-transparent",
+  "namada-shielded",
   "handshake",
   "ripple",
   "tron",
