@@ -34,6 +34,7 @@ export const PURPOSE_LABELS: Record<Purpose, string> = {
  * recognition result carries both a stable key and a pretty label.
  */
 export const STANDARDS = [
+  "algorand-arc52",
   "algorand-ledger",
   "aptos-bip44",
   "aptos-ledger",
@@ -45,6 +46,7 @@ export const STANDARDS = [
   "cardano-byron-icarus",
   "cardano-byron-random",
   "cardano-shelley",
+  "cosmos-ledger",
   "eos-ledger",
   "fuel-bip44",
   "handshake-ledger",

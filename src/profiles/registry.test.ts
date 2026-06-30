@@ -41,6 +41,8 @@ describe("registry integrity", () => {
     expect(profileById("terra-classic-station-legacy-account")?.examplePath).toBe(
       "m/44'/118'/0'/0/0"
     );
+    expect(profileById("cosmos-ledger-account")?.examplePath).toBe("m/44'/118'/0'/0/0");
+    expect(profileById("cosmos-keplr-account")?.template).toBe("m/44'/118'/0'/0/{index}");
     expect(profileById("multiversx-ledger-account")?.examplePath).toBe("m/44'/508'/0'/0'/0'");
     expect(profileById("neo-legacy-ledger-account")?.examplePath).toBe("m/44'/888'/0'/0/0");
     expect(profileById("namada-transparent-secp256k1")?.examplePath).toBe("m/44'/60'/0'/0/0");
@@ -136,8 +138,13 @@ describe("recognizePath", () => {
   });
 
   it("resolves a shared cosmos shape for any family member", () => {
-    expect(recognizePath("m/44'/118'/2'/0/0", "osmosis")?.profileId).toBe("cosmos-keplr-account");
-    expect(recognizePath("m/44'/118'/2'/0/0", "celestia")?.standardName).toBe("Keplr Cosmos");
+    expect(recognizePath("m/44'/118'/0'/0/2", "osmosis")?.profileId).toBe(
+      "cosmos-keplr-account"
+    );
+    expect(recognizePath("m/44'/118'/2'/0/0", "osmosis")?.profileId).toBe(
+      "cosmos-ledger-account"
+    );
+    expect(recognizePath("m/44'/118'/2'/0/0", "celestia")?.standardName).toBe("Cosmos Ledger");
   });
 
   it("recognizes Terra Classic ledger and station profiles", () => {
@@ -199,6 +206,31 @@ describe("recognizePath", () => {
       standard: "multiversx-wallet",
       standardName: "MultiversX Wallet",
       values: { account: 0 },
+    });
+  });
+
+  it("keeps the two Algorand path styles disjoint by hardening", () => {
+    expect(recognizePath("m/44'/283'/0'/0'/0'", "algorand")).toMatchObject({
+      chain: "algorand",
+      coinType: 283,
+      profileId: "algorand-ledger-account",
+      scheme: "ed25519",
+      standard: "algorand-ledger",
+      standardName: "Algorand Ledger",
+      values: { account: 0 },
+    });
+    expect(recognizePath("m/44'/283'/0'/0/0", "algorand")).toMatchObject({
+      chain: "algorand",
+      coinType: 283,
+      profileId: "algorand-arc52-account",
+      scheme: "ed25519",
+      standard: "algorand-arc52",
+      standardName: "Algorand ARC-52",
+      values: { account: 0, index: 0 },
+    });
+    expect(recognizePath("m/44'/283'/2'/0/1", "algorand")).toMatchObject({
+      profileId: "algorand-arc52-account",
+      values: { account: 2, index: 1 },
     });
   });
 
@@ -327,7 +359,10 @@ describe("recognizeAll", () => {
 
   it("constrains by chain hint", () => {
     expect(recognizeAll("m/44'/118'/0'/0/0", "terra")).toHaveLength(0);
-    expect(recognizeAll("m/44'/118'/0'/0/0", "cosmos")).toHaveLength(1);
+    expect(recognizeAll("m/44'/118'/0'/0/0", "cosmos").map((entry) => entry.profileId)).toEqual([
+      "cosmos-keplr-account",
+      "cosmos-ledger-account",
+    ]);
   });
 });
 
@@ -336,8 +371,14 @@ describe("profilesForChain", () => {
     expect(profilesForChain("cosmos").map((profile) => profile.id)).toContain(
       "cosmos-keplr-account"
     );
+    expect(profilesForChain("cosmos").map((profile) => profile.id)).toContain(
+      "cosmos-ledger-account"
+    );
     expect(profilesForChain("osmosis").map((profile) => profile.id)).toContain(
       "cosmos-keplr-account"
+    );
+    expect(profilesForChain("osmosis").map((profile) => profile.id)).toContain(
+      "cosmos-ledger-account"
     );
     expect(profilesForChain("terra-classic").map((profile) => profile.id)).toEqual([
       "terra-ledger-account",

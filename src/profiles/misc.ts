@@ -5,6 +5,7 @@ import {
   nativeIndexShape,
 } from "../internal/shapes.js";
 import type { Template } from "../path/template.js";
+import { lit, vr } from "../path/template.js";
 import type { Standard } from "../purposes.js";
 import type { AddressKind, SignatureScheme } from "../schemes.js";
 import { COIN_TYPES } from "../slip44.js";
@@ -84,6 +85,20 @@ const ROWS: readonly Row[] = [
     standard: "algorand-ledger",
     standardName: "Algorand Ledger",
     template: ed25519LedgerShape(COIN_TYPES.ALGORAND),
+  },
+  {
+    // ARC-52 (BIP32-Ed25519) HD accounts as used by Lute and the xHD-Wallet-API reference: account hardened, then a
+    // hardcoded soft change `0` and a soft key index. The soft tail is what enables xpub child derivation, and the
+    // missing ticks keep it disjoint from the fully-hardened Ledger shape above. (Kibisis is intentionally absent — it
+    // uses Algorand's native 25-word mnemonic as a direct ed25519 seed, so it has no `m/...` path to model.)
+    addressKind: "algorand",
+    chain: "algorand",
+    coinType: COIN_TYPES.ALGORAND,
+    id: "algorand-arc52-account",
+    scheme: "ed25519",
+    standard: "algorand-arc52",
+    standardName: "Algorand ARC-52",
+    template: [lit(44, true), lit(COIN_TYPES.ALGORAND, true), vr("account", true), lit(0), vr("index")],
   },
   {
     addressKind: "aptos",
@@ -192,6 +207,8 @@ const ROWS: readonly Row[] = [
  * Single-chain account profiles: Stellar/MultiversX/Waves/Algorand/Aptos/Nano (ed25519), Neo Legacy (secp256r1), and
  * the secp256k1 BIP44 chains (Aptos, Handshake, NavCoin, Ripple, Verge, EOS-Vaulta, Fuel, Tron). Aptos carries both an
  * ed25519 fully-hardened Ledger path and a secp256k1 BIP44 path (last two levels unhardened), matching the Aptos SDK.
+ * Algorand likewise carries two ed25519 shapes: the fully-hardened Ledger path and the ARC-52 BIP32-Ed25519 path whose
+ * last two levels are soft.
  */
 export const MISC_PROFILES: readonly DerivationProfile[] = ROWS.map((row) => ({
   addressKind: row.addressKind,
