@@ -18,21 +18,24 @@ recognition. It has no runtime dependencies; source lives under `src/`, generate
 
 ## Lint Rules
 
-After generating code, run these commands in order.
+After generating code, run these commands **in order**.
 
-File argument rules:
+**File argument rules:**
 
-- Changed fewer than 10 files? Pass specific paths or globs.
-- Changed 10+ files? Omit file arguments to process all files.
+- Changed fewer than 10 files? → Pass specific paths or globs
+- Changed 10+ files? → Omit file arguments to process all files
 
-Command sequence:
+**Command sequence:**
 
-1. Identify which file types changed.
-2. `just biome-lint <files>` - lint JS/TS/JSON/JSONC files; skip if none changed.
-3. `just prettier-check <files>` - check Markdown/YAML formatting; skip if none changed.
-4. `just type-check` - verify TypeScript types on the whole project when `.ts` files changed.
+1. **Identify which file types changed**
 
-Examples:
+2. **`just biome-lint <files>`** — lint JS/TS/JSON/JSONC files (skip if none changed)
+
+3. **`just prettier-check <files>`** — check Markdown/YAML formatting (skip if none changed)
+
+4. **`just type-check`** — verify TypeScript types on the whole project (run when `.ts` files changed)
+
+**Examples:**
 
 ```bash
 # Fewer than 10 files: use specific paths and/or globs
