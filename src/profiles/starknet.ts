@@ -16,7 +16,7 @@ export const STARKNET_PROFILES: readonly DerivationProfile[] = [
     purpose: 44,
     scheme: "stark",
     standard: "ready-argent",
-    standardName: "Ready Argent",
+    standardName: "Ready X",
     template: evmAddressIndexShape(COIN_TYPES.STARKNET),
   },
 ];
