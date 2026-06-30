@@ -11,9 +11,9 @@ export {
   profileById,
   profilesForChain,
   RESOLVED_PROFILES,
-  renderProfilePath,
   recognizeAll,
   recognizePath,
+  renderProfilePath,
 } from "./registry.js";
 export { SOLANA_PROFILES } from "./solana.js";
 export { STARKNET_PROFILES } from "./starknet.js";

@@ -51,9 +51,7 @@ describe("parsePath", () => {
   });
 
   it("accepts the maximum soft index 2^31 - 1", () => {
-    expect(parsePath(`m/${MAX_DERIVATION_INDEX}`).segments[0]?.index).toBe(
-      MAX_DERIVATION_INDEX
-    );
+    expect(parsePath(`m/${MAX_DERIVATION_INDEX}`).segments[0]?.index).toBe(MAX_DERIVATION_INDEX);
   });
 
   it("converts path levels to BIP-32 indexes", () => {

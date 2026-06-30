@@ -4,9 +4,9 @@ import {
   DERIVATION_PROFILES,
   profileById,
   profilesForChain,
-  renderProfilePath,
   recognizeAll,
   recognizePath,
+  renderProfilePath,
 } from "./registry.js";
 
 describe("registry integrity", () => {
@@ -62,9 +62,7 @@ describe("registry integrity", () => {
   });
 
   it("renders registered profile paths from authored segments", () => {
-    expect(renderProfilePath("evm-bip44-address-index", { index: 3 })).toBe(
-      "m/44'/60'/0'/0/3"
-    );
+    expect(renderProfilePath("evm-bip44-address-index", { index: 3 })).toBe("m/44'/60'/0'/0/3");
     expect(renderProfilePath("cardano-shelley-base-account", { account: 2 })).toBe(
       "m/1852'/1815'/2'/0/0"
     );
