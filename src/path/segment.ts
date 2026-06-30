@@ -15,6 +15,9 @@ export type PathTemplate = string & { readonly __brand: "PathTemplate" };
  */
 export const HARDENED_OFFSET = 2 ** 31;
 
+/** The largest valid derivation path index before the hardened bit is set. */
+export const MAX_DERIVATION_INDEX = HARDENED_OFFSET - 1;
+
 /**
  * The positional roles of a BIP-44 style path (`m / purpose' / coinType' / account' / change / addressIndex`),
  * plus the generic `index` leaf used by chains that vary the final level (EVM, Starknet).

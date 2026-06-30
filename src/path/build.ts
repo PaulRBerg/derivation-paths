@@ -1,4 +1,4 @@
-import { DerivationPathError } from "./parse.js";
+import { DerivationPathError, parsePath } from "./parse.js";
 import type { DerivationPath, ParsedPath } from "./segment.js";
 import { HARDENED_OFFSET } from "./segment.js";
 
@@ -64,4 +64,12 @@ export function buildPath(
 export function formatPath(parsed: ParsedPath): DerivationPath {
   const parts = parsed.segments.map((segment) => `${segment.index}${segment.hardened ? "'" : ""}`);
   return `m${parts.length > 0 ? `/${parts.join("/")}` : ""}` as DerivationPath;
+}
+
+/** Convert a parsed or string path into BIP-32 child indexes, with hardened levels carrying the hardened bit. */
+export function toBip32Indexes(input: string | ParsedPath): readonly number[] {
+  const parsed = typeof input === "string" ? parsePath(input) : input;
+  return parsed.segments.map((segment) =>
+    segment.hardened ? segment.index + HARDENED_OFFSET : segment.index
+  );
 }

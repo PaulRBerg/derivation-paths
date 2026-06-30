@@ -4,6 +4,7 @@ export {
   formatPath,
   type HardeningLayout,
   type PathComponents,
+  toBip32Indexes,
 } from "./build.js";
 export {
   DerivationPathError,
@@ -15,6 +16,7 @@ export {
 export {
   type DerivationPath,
   HARDENED_OFFSET,
+  MAX_DERIVATION_INDEX,
   type ParsedPath,
   type PathSegment,
   type PathTemplate,

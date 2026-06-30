@@ -21,7 +21,15 @@ bun add @prb/derivation-paths
 ## Usage
 
 ```ts
-import { buildPath, COIN_TYPES, parsePath, recognizePath } from "@prb/derivation-paths";
+import {
+  buildPath,
+  COIN_TYPES,
+  MAX_DERIVATION_INDEX,
+  parsePath,
+  recognizePath,
+  renderProfilePath,
+  toBip32Indexes,
+} from "@prb/derivation-paths";
 
 // Build a path from BIP-44 components (standard hardening applied automatically).
 buildPath({ purpose: 44, coinType: COIN_TYPES.ETHEREUM, account: 0, change: 0, addressIndex: 3 });
@@ -31,9 +39,19 @@ buildPath({ purpose: 44, coinType: COIN_TYPES.ETHEREUM, account: 0, change: 0, a
 parsePath("m/44'/60'/0'/0/0");
 // -> { purpose: 44, coinType: 60, account: 0, change: 0, addressIndex: 0, depth: 5, ... }
 
+// Convert a concrete path to BIP-32 child indexes.
+toBip32Indexes("m/44'/60'/0'/0/0");
+// -> [2147483692, 2147483708, 2147483648, 0, 0]
+
+// Render a registered profile path by stable profile id.
+renderProfilePath("evm-bip44-address-index", { index: 3 });
+// -> "m/44'/60'/0'/0/3"
+
 // Recognize a path against the registry (optionally constrained to a chain).
 recognizePath("m/84'/0'/0'", "bitcoin");
 // -> { profileId: "bitcoin-bip84-native-segwit-account", standardName: "BIP84 Native Segwit", values: { account: 0 }, ... }
+
+MAX_DERIVATION_INDEX; // 2147483647
 
 // Zcash shielded accounts (ZIP-32, `m/32'/133'/x'`) are recognized too — disjoint from transparent BIP-44.
 recognizePath("m/32'/133'/0'", "zcash");
@@ -73,16 +91,16 @@ The round-trip laws hold for every registered profile (property-tested):
 
 ## Exports
 
-| Subpath            | Contents                                                                         |
-| ------------------ | -------------------------------------------------------------------------------- |
-| `.`                | Everything below, re-exported.                                                   |
-| `./coin-types`     | `COIN_TYPES`, `COIN_TYPE_INFO`, `coinTypeInfo`, `isKnownCoinType`, …             |
-| `./purposes`       | `PURPOSES`, `PURPOSE_LABELS`, `STANDARDS`.                                       |
-| `./schemes`        | `SIGNATURE_SCHEMES`, `ADDRESS_KINDS`.                                            |
-| `./slip132`        | `SLIP132_VERSION_BYTES`, `xpubFamilyFor`.                                        |
-| `./path`           | `Template`, `render`, `toMatcher`, `match`, `parsePath`, `buildPath`, …          |
-| `./profiles`       | `DERIVATION_PROFILES`, `recognizePath`, `recognizeAll`, `profileById`, …         |
-| `./substrate-suri` | `parseSubstrateSuri`, `formatSubstrateSuri`, `isSubstrateSuri`, `SubstrateSuri`. |
+| Subpath            | Contents                                                                                      |
+| ------------------ | --------------------------------------------------------------------------------------------- |
+| `.`                | Everything below, re-exported.                                                                |
+| `./coin-types`     | `COIN_TYPES`, `COIN_TYPE_INFO`, `coinTypeInfo`, `isKnownCoinType`, …                          |
+| `./purposes`       | `PURPOSES`, `PURPOSE_LABELS`, `STANDARDS`.                                                    |
+| `./schemes`        | `SIGNATURE_SCHEMES`, `ADDRESS_KINDS`.                                                         |
+| `./slip132`        | `SLIP132_VERSION_BYTES`, `xpubFamilyFor`.                                                     |
+| `./path`           | `Template`, `render`, `toMatcher`, `match`, `parsePath`, `buildPath`, `toBip32Indexes`, …     |
+| `./profiles`       | `DERIVATION_PROFILES`, `recognizePath`, `recognizeAll`, `profileById`, `renderProfilePath`, … |
+| `./substrate-suri` | `parseSubstrateSuri`, `formatSubstrateSuri`, `isSubstrateSuri`, `SubstrateSuri`.              |
 
 ## Scope
 

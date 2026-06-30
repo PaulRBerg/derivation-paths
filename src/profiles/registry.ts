@@ -1,4 +1,4 @@
-import type { RoleValues, Template } from "../path/index.js";
+import type { DerivationPath, RoleValues, Template } from "../path/index.js";
 import { match, render, renderTemplate, toMatcher } from "../path/index.js";
 import { CARDANO_PROFILES } from "./cardano.js";
 import { COSMOS_PROFILES } from "./cosmos.js";
@@ -64,6 +64,15 @@ const PROFILES_BY_ID: ReadonlyMap<string, ResolvedProfile> = new Map(
 /** Look up a resolved profile by its stable id. */
 export function profileById(id: string): ResolvedProfile | undefined {
   return PROFILES_BY_ID.get(id);
+}
+
+/** Render a registered profile's authored template with the supplied role values. */
+export function renderProfilePath(profileId: string, values: RoleValues = {}): DerivationPath {
+  const profile = profileById(profileId);
+  if (profile === undefined) {
+    throw new Error(`unknown derivation profile: ${profileId}`);
+  }
+  return render(profile.segments, values);
 }
 
 /** Every resolved profile whose `chain` or `ecosystems` includes `chain`. */

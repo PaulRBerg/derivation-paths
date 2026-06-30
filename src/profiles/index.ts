@@ -11,6 +11,7 @@ export {
   profileById,
   profilesForChain,
   RESOLVED_PROFILES,
+  renderProfilePath,
   recognizeAll,
   recognizePath,
 } from "./registry.js";

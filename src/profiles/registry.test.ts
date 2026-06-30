@@ -4,6 +4,7 @@ import {
   DERIVATION_PROFILES,
   profileById,
   profilesForChain,
+  renderProfilePath,
   recognizeAll,
   recognizePath,
 } from "./registry.js";
@@ -58,6 +59,18 @@ describe("registry integrity", () => {
     );
     expect(profileById("nano-legacy-seed-account")?.examplePath).toBe("index=0");
     expect(profileById("nano-legacy-seed-account")?.template).toBe("index={index}");
+  });
+
+  it("renders registered profile paths from authored segments", () => {
+    expect(renderProfilePath("evm-bip44-address-index", { index: 3 })).toBe(
+      "m/44'/60'/0'/0/3"
+    );
+    expect(renderProfilePath("cardano-shelley-base-account", { account: 2 })).toBe(
+      "m/1852'/1815'/2'/0/0"
+    );
+    expect(() => renderProfilePath("missing-profile")).toThrow(
+      "unknown derivation profile: missing-profile"
+    );
   });
 });
 

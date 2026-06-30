@@ -10,6 +10,7 @@ export {
   type HardeningLayout,
   lit,
   match,
+  MAX_DERIVATION_INDEX,
   nvr,
   type ParsedPath,
   type PathComponents,
@@ -25,6 +26,7 @@ export {
   type Segment,
   safeParsePath,
   type Template,
+  toBip32Indexes,
   toMatcher,
   vr,
 } from "./path/index.js";
@@ -43,6 +45,7 @@ export {
   profilesForChain,
   RADIX_PROFILES,
   RESOLVED_PROFILES,
+  renderProfilePath,
   type Recognition,
   type ResolvedProfile,
   recognizeAll,

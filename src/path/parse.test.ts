@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { buildPath, formatPath } from "./build.js";
+import { buildPath, formatPath, toBip32Indexes } from "./build.js";
 import { DerivationPathError, parsePath, safeParsePath } from "./parse.js";
+import { HARDENED_OFFSET, MAX_DERIVATION_INDEX } from "./segment.js";
 
 describe("parsePath", () => {
   it("extracts positional BIP-44 fields", () => {
@@ -50,7 +51,26 @@ describe("parsePath", () => {
   });
 
   it("accepts the maximum soft index 2^31 - 1", () => {
-    expect(parsePath(`m/${2 ** 31 - 1}`).segments[0]?.index).toBe(2 ** 31 - 1);
+    expect(parsePath(`m/${MAX_DERIVATION_INDEX}`).segments[0]?.index).toBe(
+      MAX_DERIVATION_INDEX
+    );
+  });
+
+  it("converts path levels to BIP-32 indexes", () => {
+    expect(toBip32Indexes("m/44'/60'/0'/0/3")).toEqual([
+      HARDENED_OFFSET + 44,
+      HARDENED_OFFSET + 60,
+      HARDENED_OFFSET,
+      0,
+      3,
+    ]);
+    expect(toBip32Indexes(parsePath("m/0'/1"))).toEqual([HARDENED_OFFSET, 1]);
+  });
+
+  it("preserves parse errors when converting string paths to BIP-32 indexes", () => {
+    expect(() => toBip32Indexes("m/nope")).toThrowError(
+      expect.objectContaining({ code: "invalid-segment" })
+    );
   });
 
   it("safeParsePath does not throw", () => {
