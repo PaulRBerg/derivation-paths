@@ -59,14 +59,41 @@ const ROWS: readonly Row[] = [
     template: nativeIndexShape(),
   },
   {
+    // mx-sdk-js-wallet (the official SDK behind the MultiversX Web Wallet and xPortal) fixes account/change at `0'`
+    // and increments the hardened index instead.
+    addressKind: "multiversx",
+    chain: "multiversx",
+    coinType: COIN_TYPES.MULTIVERSX,
+    id: "multiversx-wallet-address-index",
+    scheme: "ed25519",
+    standard: "multiversx-wallet",
+    standardName: "MultiversX Wallet",
+    template: [
+      lit(44, true),
+      lit(COIN_TYPES.MULTIVERSX, true),
+      lit(0, true),
+      lit(0, true),
+      vr("index", true),
+    ],
+  },
+  {
+    // Ledger's own account-increment convention. Overlaps multiversx-wallet-address-index at account/index = 0, so
+    // this profile carries minValue: 1 to keep the two disjoint during recognition (same technique as the EVM/Ripple
+    // pairs below).
     addressKind: "multiversx",
     chain: "multiversx",
     coinType: COIN_TYPES.MULTIVERSX,
     id: "multiversx-ledger-account",
     scheme: "ed25519",
-    standard: "multiversx-wallet",
-    standardName: "MultiversX Wallet",
-    template: ed25519LedgerShape(COIN_TYPES.MULTIVERSX),
+    standard: "multiversx-ledger",
+    standardName: "MultiversX Ledger",
+    template: [
+      lit(44, true),
+      lit(COIN_TYPES.MULTIVERSX, true),
+      vr("account", true, 1),
+      lit(0, true),
+      lit(0, true),
+    ],
   },
   {
     addressKind: "waves",
@@ -100,7 +127,13 @@ const ROWS: readonly Row[] = [
     scheme: "ed25519",
     standard: "algorand-arc52",
     standardName: "Algorand ARC-52",
-    template: [lit(44, true), lit(COIN_TYPES.ALGORAND, true), vr("account", true), lit(0), vr("index")],
+    template: [
+      lit(44, true),
+      lit(COIN_TYPES.ALGORAND, true),
+      vr("account", true),
+      lit(0),
+      vr("index"),
+    ],
   },
   {
     addressKind: "aptos",
@@ -128,8 +161,8 @@ const ROWS: readonly Row[] = [
     coinType: COIN_TYPES.HANDSHAKE,
     id: "handshake-ledger-account",
     scheme: "secp256k1",
-    standard: "handshake-ledger",
-    standardName: "Handshake Ledger",
+    standard: "handshake-bip44",
+    standardName: "Handshake BIP44",
     template: bip44Shape(COIN_TYPES.HANDSHAKE),
   },
   {
@@ -192,13 +225,7 @@ const ROWS: readonly Row[] = [
     scheme: "secp256k1",
     standard: "ripple-bip44",
     standardName: "Ripple BIP44",
-    template: [
-      lit(44, true),
-      lit(COIN_TYPES.RIPPLE, true),
-      vr("account", true, 1),
-      lit(0),
-      lit(0),
-    ],
+    template: [lit(44, true), lit(COIN_TYPES.RIPPLE, true), vr("account", true, 1), lit(0), lit(0)],
   },
   {
     addressKind: "verge",
@@ -217,8 +244,8 @@ const ROWS: readonly Row[] = [
     ecosystems: ["eos-vaulta", "eos", "vaulta"],
     id: "eos-vaulta-ledger-account",
     scheme: "secp256k1",
-    standard: "eos-ledger",
-    standardName: "EOS Ledger",
+    standard: "eos-bip44",
+    standardName: "EOS BIP44",
     template: bip44Shape(COIN_TYPES.EOS),
   },
   {
@@ -235,21 +262,35 @@ const ROWS: readonly Row[] = [
     addressKind: "tron",
     chain: "tron",
     coinType: COIN_TYPES.TRON,
+    id: "tron-tronlink-account",
+    scheme: "secp256k1",
+    standard: "tron-tronlink",
+    standardName: "TronLink",
+    template: bip44AddressIndexShape(COIN_TYPES.TRON),
+  },
+  {
+    // Overlaps tron-tronlink-account at account/index = 0, so this profile carries minValue: 1 to keep the two
+    // disjoint during recognition (same technique as the EVM/Ripple pairs above).
+    addressKind: "tron",
+    chain: "tron",
+    coinType: COIN_TYPES.TRON,
     id: "tron-ledger-account",
     scheme: "secp256k1",
     standard: "tron-ledger",
     standardName: "Tron Ledger",
-    template: bip44Shape(COIN_TYPES.TRON),
+    template: [lit(44, true), lit(COIN_TYPES.TRON, true), vr("account", true, 1), lit(0), lit(0)],
   },
 ];
 
 /**
- * Single-chain account profiles: Stellar/MultiversX/Waves/Algorand/Aptos/Nano (ed25519), Neo Legacy (secp256r1), and
- * the secp256k1 BIP44 chains (Aptos, Handshake, NavCoin, Ripple, Verge, EOS-Vaulta, Fuel, Tron). Aptos carries both an
- * ed25519 fully-hardened Ledger path and a secp256k1 BIP44 path (last two levels unhardened), matching the Aptos SDK.
+ * Single-chain account profiles: Stellar/Waves/Algorand/Aptos/Nano (ed25519), Neo Legacy (secp256r1), and the
+ * secp256k1 BIP44 chains (Aptos, Handshake, NavCoin, Ripple, Verge, EOS-Vaulta, Fuel). Aptos carries both an ed25519
+ * fully-hardened Ledger path and a secp256k1 BIP44 path (last two levels unhardened), matching the Aptos SDK.
  * Algorand likewise carries two ed25519 shapes: the fully-hardened Ledger path and the ARC-52 BIP32-Ed25519 path whose
- * last two levels are soft. Ripple likewise carries two secp256k1 shapes, mirroring the EVM pair: a generic BIP44
- * address-index path (fixed account, varying index) and a Ledger Live-style account-index path (`minValue: 1`).
+ * last two levels are soft. Ripple and Tron each carry two secp256k1 shapes, mirroring the EVM pair: a generic/wallet
+ * address-index path (fixed account, varying index — TronLink for Tron) and a Ledger Live-style account-index path
+ * (`minValue: 1`). MultiversX carries the same pair on ed25519, fully hardened throughout: the official SDK/Web
+ * Wallet/xPortal address-index path and Ledger's own account-index path (`minValue: 1`).
  * Neo Legacy carries three secp256r1 shapes because NEO never had an official HD standard (NEP-6/WIF is address-only,
  * not BIP32): SafePal's account-only path, Atomic Wallet's account+change path, and the full account/change/index
  * BIP44 path other wallets use.

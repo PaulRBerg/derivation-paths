@@ -49,7 +49,10 @@ describe("registry integrity", () => {
     );
     expect(profileById("cosmos-ledger-account")?.examplePath).toBe("m/44'/118'/0'/0/0");
     expect(profileById("cosmos-keplr-account")?.template).toBe("m/44'/118'/0'/0/{index}");
-    expect(profileById("multiversx-ledger-account")?.examplePath).toBe("m/44'/508'/0'/0'/0'");
+    expect(profileById("multiversx-wallet-address-index")?.examplePath).toBe("m/44'/508'/0'/0'/0'");
+    expect(profileById("multiversx-ledger-account")?.examplePath).toBe("m/44'/508'/1'/0'/0'");
+    expect(profileById("tron-tronlink-account")?.examplePath).toBe("m/44'/195'/0'/0/0");
+    expect(profileById("tron-ledger-account")?.examplePath).toBe("m/44'/195'/1'/0/0");
     expect(profileById("neo-legacy-bip44-account")?.examplePath).toBe("m/44'/888'/0'/0/0");
     expect(profileById("neo-legacy-safepal-account")?.examplePath).toBe("m/44'/888'/0'");
     expect(profileById("neo-legacy-atomic-wallet-account")?.examplePath).toBe("m/44'/888'/0'/0");
@@ -129,6 +132,18 @@ describe("recognizePath", () => {
     expect(profilesForChain("ripple").map((profile) => profile.id)).toEqual([
       "ripple-bip44-address-index",
       "ripple-bip44-account",
+    ]);
+  });
+
+  it("disambiguates TronLink from Tron Ledger via minValue", () => {
+    expect(recognizePath("m/44'/195'/0'/0/0", "tron")?.profileId).toBe("tron-tronlink-account");
+    expect(recognizePath("m/44'/195'/1'/0/0", "tron")).toMatchObject({
+      profileId: "tron-ledger-account",
+      values: { account: 1 },
+    });
+    expect(profilesForChain("tron").map((profile) => profile.id)).toEqual([
+      "tron-tronlink-account",
+      "tron-ledger-account",
     ]);
   });
 
@@ -237,15 +252,24 @@ describe("recognizePath", () => {
     });
   });
 
-  it("recognizes the MultiversX Wallet extension path", () => {
+  it("disambiguates MultiversX Wallet from Ledger via minValue", () => {
     expect(recognizePath("m/44'/508'/0'/0'/0'", "multiversx")).toMatchObject({
+      chain: "multiversx",
+      coinType: 508,
+      profileId: "multiversx-wallet-address-index",
+      scheme: "ed25519",
+      standard: "multiversx-wallet",
+      standardName: "MultiversX Wallet",
+      values: { index: 0 },
+    });
+    expect(recognizePath("m/44'/508'/1'/0'/0'", "multiversx")).toMatchObject({
       chain: "multiversx",
       coinType: 508,
       profileId: "multiversx-ledger-account",
       scheme: "ed25519",
-      standard: "multiversx-wallet",
-      standardName: "MultiversX Wallet",
-      values: { account: 0 },
+      standard: "multiversx-ledger",
+      standardName: "MultiversX Ledger",
+      values: { account: 1 },
     });
   });
 
@@ -511,6 +535,8 @@ describe("minValueForRole", () => {
   it("reads the minValue authored on a profile's role segment", () => {
     expect(minValueForRole("evm-ledger-live-account-index", "account")).toBe(1);
     expect(minValueForRole("ripple-bip44-account", "account")).toBe(1);
+    expect(minValueForRole("multiversx-ledger-account", "account")).toBe(1);
+    expect(minValueForRole("tron-ledger-account", "account")).toBe(1);
   });
 
   it("returns undefined when the role's segment carries no minValue", () => {
