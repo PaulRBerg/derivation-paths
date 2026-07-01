@@ -31,6 +31,14 @@ export const bip44AccountOnlyShape = (coinType: number): Template => [
   vr("account", true),
 ];
 
+/** `m/44'/{coin}'/{account}'/0` — hardened account, fixed non-hardened change (Atomic Wallet's NEO path). */
+export const bip44ChangeOnlyShape = (coinType: number): Template => [
+  lit(44, true),
+  lit(coinType, true),
+  vr("account", true),
+  lit(0),
+];
+
 /** `m/44'/{coin}'/{account}'/0'/0'` — fully-hardened ed25519 Ledger (replaces `bip44Ed25519Ledger`). */
 export const ed25519LedgerShape = (coinType: number): Template => [
   lit(44, true),

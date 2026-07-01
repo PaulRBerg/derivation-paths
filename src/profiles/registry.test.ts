@@ -50,7 +50,9 @@ describe("registry integrity", () => {
     expect(profileById("cosmos-ledger-account")?.examplePath).toBe("m/44'/118'/0'/0/0");
     expect(profileById("cosmos-keplr-account")?.template).toBe("m/44'/118'/0'/0/{index}");
     expect(profileById("multiversx-ledger-account")?.examplePath).toBe("m/44'/508'/0'/0'/0'");
-    expect(profileById("neo-legacy-ledger-account")?.examplePath).toBe("m/44'/888'/0'/0/0");
+    expect(profileById("neo-legacy-bip44-account")?.examplePath).toBe("m/44'/888'/0'/0/0");
+    expect(profileById("neo-legacy-safepal-account")?.examplePath).toBe("m/44'/888'/0'");
+    expect(profileById("neo-legacy-atomic-wallet-account")?.examplePath).toBe("m/44'/888'/0'/0");
     expect(profileById("namada-transparent-secp256k1")?.examplePath).toBe("m/44'/60'/0'/0/0");
     expect(profileById("namada-shielded-modified-zip32")?.examplePath).toBe(
       "m/44'/877'/0'/0'/2147483647'"
@@ -179,14 +181,38 @@ describe("recognizePath", () => {
     });
   });
 
-  it("recognizes the Neo Legacy Ledger P-256 path", () => {
+  it("recognizes the Neo Legacy BIP44 P-256 path", () => {
     expect(recognizePath("m/44'/888'/0'/0/0", "neo-legacy")).toMatchObject({
       chain: "neo-legacy",
       coinType: 888,
-      profileId: "neo-legacy-ledger-account",
+      profileId: "neo-legacy-bip44-account",
       scheme: "secp256r1",
-      standard: "neo-legacy-ledger",
-      standardName: "Neo Legacy Ledger",
+      standard: "neo-legacy-bip44",
+      standardName: "Neo Legacy BIP44",
+      values: { account: 0 },
+    });
+  });
+
+  it("recognizes the Neo Legacy SafePal P-256 path", () => {
+    expect(recognizePath("m/44'/888'/0'", "neo-legacy")).toMatchObject({
+      chain: "neo-legacy",
+      coinType: 888,
+      profileId: "neo-legacy-safepal-account",
+      scheme: "secp256r1",
+      standard: "neo-legacy-safepal",
+      standardName: "Neo Legacy SafePal",
+      values: { account: 0 },
+    });
+  });
+
+  it("recognizes the Neo Legacy Atomic Wallet P-256 path", () => {
+    expect(recognizePath("m/44'/888'/0'/0", "neo-legacy")).toMatchObject({
+      chain: "neo-legacy",
+      coinType: 888,
+      profileId: "neo-legacy-atomic-wallet-account",
+      scheme: "secp256r1",
+      standard: "neo-legacy-atomic-wallet",
+      standardName: "Neo Legacy Atomic Wallet",
       values: { account: 0 },
     });
   });
@@ -400,7 +426,9 @@ describe("profilesForChain", () => {
       "terra-classic-station-legacy-account",
     ]);
     expect(profilesForChain("neo-legacy").map((profile) => profile.id)).toEqual([
-      "neo-legacy-ledger-account",
+      "neo-legacy-safepal-account",
+      "neo-legacy-atomic-wallet-account",
+      "neo-legacy-bip44-account",
     ]);
     expect(profilesForChain("nano").map((profile) => profile.id)).toEqual([
       "nano-ledger-account",

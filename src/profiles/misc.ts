@@ -1,6 +1,7 @@
 import {
   bip44AccountOnlyShape,
   bip44AddressIndexShape,
+  bip44ChangeOnlyShape,
   bip44Shape,
   ed25519LedgerShape,
   nativeIndexShape,
@@ -145,10 +146,30 @@ const ROWS: readonly Row[] = [
     addressKind: "neo-legacy",
     chain: "neo-legacy",
     coinType: COIN_TYPES.NEO,
-    id: "neo-legacy-ledger-account",
+    id: "neo-legacy-safepal-account",
     scheme: "secp256r1",
-    standard: "neo-legacy-ledger",
-    standardName: "Neo Legacy Ledger",
+    standard: "neo-legacy-safepal",
+    standardName: "Neo Legacy SafePal",
+    template: bip44AccountOnlyShape(COIN_TYPES.NEO),
+  },
+  {
+    addressKind: "neo-legacy",
+    chain: "neo-legacy",
+    coinType: COIN_TYPES.NEO,
+    id: "neo-legacy-atomic-wallet-account",
+    scheme: "secp256r1",
+    standard: "neo-legacy-atomic-wallet",
+    standardName: "Neo Legacy Atomic Wallet",
+    template: bip44ChangeOnlyShape(COIN_TYPES.NEO),
+  },
+  {
+    addressKind: "neo-legacy",
+    chain: "neo-legacy",
+    coinType: COIN_TYPES.NEO,
+    id: "neo-legacy-bip44-account",
+    scheme: "secp256r1",
+    standard: "neo-legacy-bip44",
+    standardName: "Neo Legacy BIP44",
     template: bip44Shape(COIN_TYPES.NEO),
   },
   {
@@ -229,6 +250,9 @@ const ROWS: readonly Row[] = [
  * Algorand likewise carries two ed25519 shapes: the fully-hardened Ledger path and the ARC-52 BIP32-Ed25519 path whose
  * last two levels are soft. Ripple likewise carries two secp256k1 shapes, mirroring the EVM pair: a generic BIP44
  * address-index path (fixed account, varying index) and a Ledger Live-style account-index path (`minValue: 1`).
+ * Neo Legacy carries three secp256r1 shapes because NEO never had an official HD standard (NEP-6/WIF is address-only,
+ * not BIP32): SafePal's account-only path, Atomic Wallet's account+change path, and the full account/change/index
+ * BIP44 path other wallets use.
  */
 export const MISC_PROFILES: readonly DerivationProfile[] = ROWS.map((row) => ({
   addressKind: row.addressKind,
