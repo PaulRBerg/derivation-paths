@@ -1,13 +1,17 @@
 import { describe, expect, it } from "vitest";
 import { isKnownCoinType } from "../slip44.js";
 import {
+  accountPathRenderer,
   DERIVATION_PROFILES,
+  indexPathRenderer,
+  minValueForRole,
   profileById,
   profilesForChain,
   recognizeAll,
   recognizePath,
   renderProfilePath,
 } from "./registry.js";
+import { isUtxoChain, UTXO_CHAINS } from "./utxo.js";
 
 describe("registry integrity", () => {
   it("has a unique id per profile", () => {
@@ -152,12 +156,8 @@ describe("recognizePath", () => {
   });
 
   it("resolves a shared cosmos shape for any family member", () => {
-    expect(recognizePath("m/44'/118'/0'/0/2", "osmosis")?.profileId).toBe(
-      "cosmos-keplr-account"
-    );
-    expect(recognizePath("m/44'/118'/2'/0/0", "osmosis")?.profileId).toBe(
-      "cosmos-ledger-account"
-    );
+    expect(recognizePath("m/44'/118'/0'/0/2", "osmosis")?.profileId).toBe("cosmos-keplr-account");
+    expect(recognizePath("m/44'/118'/2'/0/0", "osmosis")?.profileId).toBe("cosmos-ledger-account");
     expect(recognizePath("m/44'/118'/2'/0/0", "celestia")?.standardName).toBe("Cosmos Ledger");
   });
 
@@ -466,5 +466,48 @@ describe("legacy profiles", () => {
       values: { index: 0 },
     });
     expect(recognizePath("m/5", "hush")?.values).toEqual({ index: 5 });
+  });
+});
+
+describe("accountPathRenderer / indexPathRenderer", () => {
+  it("curries a profile id into an account-role path renderer", () => {
+    expect(accountPathRenderer("evm-ledger-live-account-index")(1)).toBe("m/44'/60'/1'/0/0");
+  });
+
+  it("curries a profile id into an index-role path renderer", () => {
+    expect(indexPathRenderer("evm-bip44-address-index")(3)).toBe("m/44'/60'/0'/0/3");
+  });
+});
+
+describe("minValueForRole", () => {
+  it("reads the minValue authored on a profile's role segment", () => {
+    expect(minValueForRole("evm-ledger-live-account-index", "account")).toBe(1);
+    expect(minValueForRole("ripple-bip44-account", "account")).toBe(1);
+  });
+
+  it("returns undefined when the role's segment carries no minValue", () => {
+    expect(minValueForRole("evm-bip44-address-index", "index")).toBeUndefined();
+  });
+
+  it("returns undefined when the profile has no segment for the role", () => {
+    expect(minValueForRole("evm-bip44-address-index", "account")).toBeUndefined();
+  });
+
+  it("throws for an unknown profile id", () => {
+    expect(() => minValueForRole("missing-profile", "account")).toThrow(
+      "unknown derivation profile: missing-profile"
+    );
+  });
+});
+
+describe("isUtxoChain", () => {
+  it("recognizes every UTXO chain", () => {
+    for (const chain of UTXO_CHAINS) {
+      expect(isUtxoChain(chain)).toBe(true);
+    }
+  });
+
+  it("rejects a non-UTXO chain", () => {
+    expect(isUtxoChain("evm")).toBe(false);
   });
 });

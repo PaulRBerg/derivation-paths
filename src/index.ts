@@ -1,3 +1,9 @@
+// UTXO output-descriptor kind + template.
+export {
+  descriptorKindForAddressKind,
+  outputDescriptorTemplate,
+  type UtxoDescriptorKind,
+} from "./descriptors.js";
 // Path engine: the single-source-of-truth template, plus parse/build helpers.
 export {
   buildPath,
@@ -32,14 +38,18 @@ export {
 } from "./path/index.js";
 // Profiles registry + recognition.
 export {
+  accountPathRenderer,
   CARDANO_PROFILES,
   COSMOS_PROFILES,
   DERIVATION_PROFILES,
   type DerivationProfile,
   EVM_PROFILES,
   IOTA_PROFILES,
+  indexPathRenderer,
+  isUtxoChain,
   LEGACY_PROFILES,
   MISC_PROFILES,
+  minValueForRole,
   NAMADA_PROFILES,
   profileById,
   profilesForChain,
@@ -53,7 +63,9 @@ export {
   SOLANA_PROFILES,
   STARKNET_PROFILES,
   SUBSTRATE_PROFILES,
+  UTXO_CHAINS,
   UTXO_PROFILES,
+  type UtxoChain,
   ZCASH_SHIELDED_PROFILES,
 } from "./profiles/index.js";
 // Purposes + standards.

@@ -1,4 +1,4 @@
-import type { DerivationPath, RoleValues, Template } from "../path/index.js";
+import type { DerivationPath, Role, RoleValues, Template } from "../path/index.js";
 import { match, render, renderTemplate, toMatcher } from "../path/index.js";
 import { CARDANO_PROFILES } from "./cardano.js";
 import { COSMOS_PROFILES } from "./cosmos.js";
@@ -125,4 +125,24 @@ export function recognizeAll(path: string, chainHint?: string): readonly Recogni
     }
   }
   return matches;
+}
+
+/** Curry a registered profile's `account` role into a single-argument path renderer. */
+export function accountPathRenderer(profileId: string): (account: number) => DerivationPath {
+  return (account) => renderProfilePath(profileId, { account });
+}
+
+/** Curry a registered profile's `index` role into a single-argument path renderer. */
+export function indexPathRenderer(profileId: string): (index: number) => DerivationPath {
+  return (index) => renderProfilePath(profileId, { index });
+}
+
+/** The `minValue` authored on a registered profile's `role` segment, or `undefined` if the role has none. */
+export function minValueForRole(profileId: string, role: Role): number | undefined {
+  const profile = profileById(profileId);
+  if (profile === undefined) {
+    throw new Error(`unknown derivation profile: ${profileId}`);
+  }
+  const segment = profile.segments.find((s) => s.kind !== "fixed" && s.role === role);
+  return segment !== undefined && segment.kind !== "fixed" ? segment.minValue : undefined;
 }

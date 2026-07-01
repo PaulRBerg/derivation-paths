@@ -1,10 +1,11 @@
-import { bip44Shape } from "../internal/shapes.js";
+import { bip44AddressIndexShape, bip44Shape } from "../internal/shapes.js";
 import { COIN_TYPES } from "../slip44.js";
 import type { DerivationProfile } from "./types.js";
 
 /**
- * Cosmos-family chains. The Keplr profile (coin type 118) is shared verbatim across the listed ecosystems; Terra keeps
- * its own coin type (330).
+ * Cosmos-family chains. Keplr extension mnemonic accounts and Ledger Cosmos accounts overlap at
+ * `m/44'/118'/0'/0/0`, so `recognizeAll` is required when wallet provenance matters. Terra keeps its own coin type
+ * (330).
  */
 export const COSMOS_PROFILES: readonly DerivationProfile[] = [
   {
@@ -17,6 +18,18 @@ export const COSMOS_PROFILES: readonly DerivationProfile[] = [
     scheme: "secp256k1",
     standard: "keplr-cosmos",
     standardName: "Keplr Cosmos",
+    template: bip44AddressIndexShape(COIN_TYPES.COSMOS),
+  },
+  {
+    addressKind: "cosmos",
+    chain: "cosmos",
+    coinType: COIN_TYPES.COSMOS,
+    ecosystems: ["babylon", "celestia", "cosmos", "osmosis", "saga"],
+    id: "cosmos-ledger-account",
+    purpose: 44,
+    scheme: "secp256k1",
+    standard: "cosmos-ledger",
+    standardName: "Cosmos Ledger",
     template: bip44Shape(COIN_TYPES.COSMOS),
   },
   {

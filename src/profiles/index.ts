@@ -7,7 +7,10 @@ export { MISC_PROFILES } from "./misc.js";
 export { NAMADA_PROFILES } from "./namada.js";
 export { RADIX_PROFILES } from "./radix.js";
 export {
+  accountPathRenderer,
   DERIVATION_PROFILES,
+  indexPathRenderer,
+  minValueForRole,
   profileById,
   profilesForChain,
   RESOLVED_PROFILES,
@@ -19,5 +22,5 @@ export { SOLANA_PROFILES } from "./solana.js";
 export { STARKNET_PROFILES } from "./starknet.js";
 export { SUBSTRATE_PROFILES } from "./substrate.js";
 export type { DerivationProfile, Recognition, ResolvedProfile } from "./types.js";
-export { UTXO_PROFILES } from "./utxo.js";
+export { isUtxoChain, UTXO_CHAINS, UTXO_PROFILES, type UtxoChain } from "./utxo.js";
 export { ZCASH_SHIELDED_PROFILES } from "./zcash.js";

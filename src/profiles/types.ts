@@ -7,8 +7,10 @@ import type { XpubFamily } from "../slip132.js";
  * Intrinsic metadata for one chain + standard. The `id` reuses the original profile slug; the `template` is the single
  * source of truth from which the path string and the recognizer are both derived.
  *
- * Explorer/RPC/wallet-UX glue (descriptors, endpoints, ss58 prefixes, hrp, class hashes, ...) is deliberately excluded:
- * if a field changes when you swap explorer, RPC, or wallet, it does not belong here.
+ * Explorer/RPC/wallet-UX glue (endpoints, ss58 prefixes, hrp, class hashes, ...) is deliberately excluded: if a field
+ * changes when you swap explorer, RPC, or wallet, it does not belong here. UTXO output-descriptor kind/template (see
+ * `../descriptors.js`) is the one exception: it is a pure function of `addressKind`, not a wallet or explorer choice,
+ * so it is modeled separately rather than excluded.
  */
 export type DerivationProfile = {
   /** Stable id, e.g. `bitcoin-bip84-native-segwit-account`. */

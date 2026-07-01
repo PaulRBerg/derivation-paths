@@ -100,13 +100,16 @@ The round-trip laws hold for every registered profile (property-tested):
 | `./slip132`        | `SLIP132_VERSION_BYTES`, `xpubFamilyFor`.                                                     |
 | `./path`           | `Template`, `render`, `toMatcher`, `match`, `parsePath`, `buildPath`, `toBip32Indexes`, …     |
 | `./profiles`       | `DERIVATION_PROFILES`, `recognizePath`, `recognizeAll`, `profileById`, `renderProfilePath`, … |
+| `./descriptors`    | `UtxoDescriptorKind`, `descriptorKindForAddressKind`, `outputDescriptorTemplate`.             |
 | `./substrate-suri` | `parseSubstrateSuri`, `formatSubstrateSuri`, `isSubstrateSuri`, `SubstrateSuri`.              |
 
 ## Scope
 
 Pure data, types, and path utilities. **No key derivation, no crypto dependencies.** Explorer/RPC/wallet-UX glue
-(descriptors, endpoints, ss58 prefixes, hrp, class hashes) is deliberately excluded: if a field changes when you swap
-explorer, RPC, or wallet, it does not belong here.
+(endpoints, ss58 prefixes, hrp, class hashes) is deliberately excluded: if a field changes when you swap explorer, RPC,
+or wallet, it does not belong here. UTXO output-descriptor kind/template is the one exception: it is a pure function of
+`addressKind` (the on-chain script type), not a wallet or explorer choice, so `descriptorKindForAddressKind` and
+`outputDescriptorTemplate` are modeled here.
 
 ## License
 

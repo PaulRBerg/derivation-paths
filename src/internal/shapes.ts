@@ -15,6 +15,15 @@ export const bip44Shape = (coinType: number): Template => [
   lit(0),
 ];
 
+/** `m/44'/{coin}'/0'/0/{index}` — fixed-account BIP-44 address index. */
+export const bip44AddressIndexShape = (coinType: number): Template => [
+  lit(44, true),
+  lit(coinType, true),
+  lit(0, true),
+  lit(0),
+  vr("index"),
+];
+
 /** `m/44'/{coin}'/{account}'` — account-only (replaces `bip44AccountOnly`). */
 export const bip44AccountOnlyShape = (coinType: number): Template => [
   lit(44, true),

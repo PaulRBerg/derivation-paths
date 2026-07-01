@@ -131,3 +131,20 @@ export const UTXO_PROFILES: readonly DerivationProfile[] = [
     "bip44-transparent"
   ),
 ];
+
+/** Every UTXO chain modeled by {@link UTXO_PROFILES}. */
+export const UTXO_CHAINS = [
+  "bitcoin",
+  "bitcoin-cash",
+  "bitcoin-gold",
+  "dash",
+  "litecoin",
+  "zcash",
+] as const;
+
+export type UtxoChain = (typeof UTXO_CHAINS)[number];
+
+/** Narrow an arbitrary chain slug to a known {@link UtxoChain}. */
+export function isUtxoChain(value: string): value is UtxoChain {
+  return (UTXO_CHAINS as readonly string[]).includes(value);
+}
