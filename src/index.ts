@@ -51,6 +51,7 @@ export {
   MISC_PROFILES,
   minValueForRole,
   NAMADA_PROFILES,
+  type PathRenderer,
   profileById,
   profilesForChain,
   RADIX_PROFILES,

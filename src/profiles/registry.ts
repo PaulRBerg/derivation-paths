@@ -127,13 +127,16 @@ export function recognizeAll(path: string, chainHint?: string): readonly Recogni
   return matches;
 }
 
+/** A single-argument path renderer curried from a registered profile id (see {@link accountPathRenderer}, {@link indexPathRenderer}). */
+export type PathRenderer = (value: number) => DerivationPath;
+
 /** Curry a registered profile's `account` role into a single-argument path renderer. */
-export function accountPathRenderer(profileId: string): (account: number) => DerivationPath {
+export function accountPathRenderer(profileId: string): PathRenderer {
   return (account) => renderProfilePath(profileId, { account });
 }
 
 /** Curry a registered profile's `index` role into a single-argument path renderer. */
-export function indexPathRenderer(profileId: string): (index: number) => DerivationPath {
+export function indexPathRenderer(profileId: string): PathRenderer {
   return (index) => renderProfilePath(profileId, { index });
 }
 

@@ -11,6 +11,7 @@ export {
   DERIVATION_PROFILES,
   indexPathRenderer,
   minValueForRole,
+  type PathRenderer,
   profileById,
   profilesForChain,
   RESOLVED_PROFILES,
