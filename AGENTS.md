@@ -84,8 +84,8 @@ If any command fails, analyze the errors and fix only those related to files you
   a union type (`SIGNATURE_SCHEMES`, `ADDRESS_KINDS`, `STANDARDS`) and object keys. Do not alphabetize where order is
   semantic: `DERIVATION_PROFILES` (first-match recognition) and positional path-level arrays (`POSITIONAL_FIELDS`,
   `ORDER`, `SEGMENT_ROLES`).
-- Do not add runtime crypto, key derivation, RPC/explorer, wallet-UX, or network dependencies; the package scope is
-  pure data and path utilities. Exception: standard-derived UTXO output-descriptor kind/template (a pure function of
+- Do not add runtime crypto, key derivation, RPC/explorer, wallet-UX, or network dependencies; the package scope is pure
+  data and path utilities. Exception: standard-derived UTXO output-descriptor kind/template (a pure function of
   `addressKind`, modeled in `src/descriptors.ts`) is in scope; explorer- or wallet-brand-specific descriptor, URL, or
   instruction glue is not.
 - Do not commit generated `dist/` output or `.tgz` package artifacts unless the user explicitly asks.
