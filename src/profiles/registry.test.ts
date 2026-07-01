@@ -30,6 +30,8 @@ describe("registry integrity", () => {
   it("precomputes example paths from the template", () => {
     expect(profileById("evm-bip44-address-index")?.examplePath).toBe("m/44'/60'/0'/0/0");
     expect(profileById("evm-ledger-live-account-index")?.examplePath).toBe("m/44'/60'/1'/0/0");
+    expect(profileById("ripple-bip44-address-index")?.examplePath).toBe("m/44'/144'/0'/0/0");
+    expect(profileById("ripple-bip44-account")?.examplePath).toBe("m/44'/144'/1'/0/0");
     expect(profileById("dash-bip44-legacy-account")?.examplePath).toBe("m/44'/5'/0'");
     expect(profileById("dash-bip44-legacy-account")?.template).toBe("m/44'/5'/{account}'");
     expect(profileById("bitcoin-bip84-native-segwit-account")?.template).toBe(
@@ -110,6 +112,18 @@ describe("recognizePath", () => {
       profileId: "evm-ledger-live-account-index",
       values: { account: 1 },
     });
+  });
+
+  it("disambiguates Ripple BIP44 address index from the account-style profile via minValue", () => {
+    expect(recognizePath("m/44'/144'/0'/0/0")?.profileId).toBe("ripple-bip44-address-index");
+    expect(recognizePath("m/44'/144'/1'/0/0")).toMatchObject({
+      profileId: "ripple-bip44-account",
+      values: { account: 1 },
+    });
+    expect(profilesForChain("ripple").map((profile) => profile.id)).toEqual([
+      "ripple-bip44-address-index",
+      "ripple-bip44-account",
+    ]);
   });
 
   it("recognizes Dymension as an EVM-shaped ecosystem", () => {

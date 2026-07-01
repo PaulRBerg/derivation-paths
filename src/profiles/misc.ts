@@ -1,5 +1,6 @@
 import {
   bip44AccountOnlyShape,
+  bip44AddressIndexShape,
   bip44Shape,
   ed25519LedgerShape,
   nativeIndexShape,
@@ -154,11 +155,29 @@ const ROWS: readonly Row[] = [
     addressKind: "ripple",
     chain: "ripple",
     coinType: COIN_TYPES.RIPPLE,
+    id: "ripple-bip44-address-index",
+    scheme: "secp256k1",
+    standard: "bip44",
+    standardName: "BIP44",
+    template: bip44AddressIndexShape(COIN_TYPES.RIPPLE),
+  },
+  {
+    // Ledger Live-style account increment. Overlaps ripple-bip44-address-index at account/index = 0, so this profile
+    // carries minValue: 1 to keep the two disjoint during recognition (same technique as the EVM pair).
+    addressKind: "ripple",
+    chain: "ripple",
+    coinType: COIN_TYPES.RIPPLE,
     id: "ripple-bip44-account",
     scheme: "secp256k1",
     standard: "ripple-bip44",
     standardName: "Ripple BIP44",
-    template: bip44Shape(COIN_TYPES.RIPPLE),
+    template: [
+      lit(44, true),
+      lit(COIN_TYPES.RIPPLE, true),
+      vr("account", true, 1),
+      lit(0),
+      lit(0),
+    ],
   },
   {
     addressKind: "verge",
@@ -208,7 +227,8 @@ const ROWS: readonly Row[] = [
  * the secp256k1 BIP44 chains (Aptos, Handshake, NavCoin, Ripple, Verge, EOS-Vaulta, Fuel, Tron). Aptos carries both an
  * ed25519 fully-hardened Ledger path and a secp256k1 BIP44 path (last two levels unhardened), matching the Aptos SDK.
  * Algorand likewise carries two ed25519 shapes: the fully-hardened Ledger path and the ARC-52 BIP32-Ed25519 path whose
- * last two levels are soft.
+ * last two levels are soft. Ripple likewise carries two secp256k1 shapes, mirroring the EVM pair: a generic BIP44
+ * address-index path (fixed account, varying index) and a Ledger Live-style account-index path (`minValue: 1`).
  */
 export const MISC_PROFILES: readonly DerivationProfile[] = ROWS.map((row) => ({
   addressKind: row.addressKind,
